@@ -1,5 +1,6 @@
 const userSchema = require("../models/userSchema")
 const { sendEmail } = require("../services/emailServices")
+const { verifyOtpTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
 const { isValidEmail } = require("../utils/validations")
 
@@ -16,7 +17,7 @@ const signUp = async (req, res) => {
 
         // ------------- Send Email 
         const OTP = generateOTP()
-        sendEmail({email, subject: "Email Verification", OTP: OTP})
+        sendEmail({email, subject: "Email Verification", OTP: OTP, template: verifyOtpTemp})
 
         // ----------- Sent to DB 
         const user = new userSchema({
