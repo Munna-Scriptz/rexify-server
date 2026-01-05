@@ -12,9 +12,9 @@ const transporter = nodemailer.createTransport({
 
 const sendEmail = async ({ email, subject, OTP }) => {
     await transporter.sendMail({
-        from: '"E-commerce" <xmunna079@gmail.com>',
+        from: 'Rexify eCommerce',
         to: email,
-        subject,
+        subject: subject,
         html: `<b>Please verify your e-commerce account. Your OTP: ${OTP}</b>`,
     });
 };
