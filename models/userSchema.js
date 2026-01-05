@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
         default: null
     },
     otpExpires: {
-        type: String
+        type: Date
     },
     isVerified: {
         type: Boolean,
