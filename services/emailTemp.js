@@ -2,12 +2,10 @@ const verifyOtpTemp = ({ otp }) => {
     return `
         <body style="margin:0; padding:0; background:#eef1f5; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
 
-  <!-- Background Wrapper -->
   <table width="100%" cellpadding="0" cellspacing="0" style="padding:60px 0;">
     <tr>
       <td align="center">
 
-        <!-- Outer Glow -->
         <div style="
           max-width:520px;
           padding:2px;

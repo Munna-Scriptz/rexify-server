@@ -4,6 +4,7 @@ const { verifyOtpTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
 const { isValidEmail } = require("../utils/validations")
 
+// ========================== Sign Up ==========================
 const signUp = async (req, res) => {
     try {
         const { email, password } = req.body
@@ -17,7 +18,7 @@ const signUp = async (req, res) => {
 
         // ------------- Send Email 
         const OTP = generateOTP()
-        sendEmail({email, subject: "Email Verification", OTP: OTP, template: verifyOtpTemp})
+        sendEmail({ email, subject: "Email Verification", OTP: OTP, template: verifyOtpTemp })
 
         // ----------- Sent to DB 
         const user = new userSchema({
@@ -38,9 +39,25 @@ const signUp = async (req, res) => {
     }
 }
 
+// ========================== Verify OTP ==========================
+const verifyOTP = async (req, res) => {
+    try {
+        const { email, otp } = req.body
+
+
+        res.status(200).send({message: "Verification Successful"})
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+// ========================== Resend OTP ==========================
+
+// ========================== Sign In ==========================
 
 
 
 
 
-module.exports = { signUp }
+module.exports = { signUp, verifyOTP }
