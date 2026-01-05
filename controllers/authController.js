@@ -35,7 +35,7 @@ const signUp = async (req, res) => {
         res.status(201).send('Registration Successful')
 
     } catch (error) {
-        console.log(error)
+        res.status(500).send({ message: "Internal server error" })
     }
 }
 
@@ -58,8 +58,14 @@ const verifyOTP = async (req, res) => {
 
         // ------ Validations 
         if(!user) return res.status(400).send({ message: "OTP is invalid or expired" })
+        
+        // ------- Modifying DB 
+        user.isVerified = true
+        user.otp = null
+        user.save()
 
 
+        // ---------- Success 
         res.status(200).send({ message: "Verification Successful" })
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
