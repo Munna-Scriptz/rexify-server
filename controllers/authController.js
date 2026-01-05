@@ -44,10 +44,21 @@ const verifyOTP = async (req, res) => {
     try {
         const { email, otp } = req.body
 
+        // -------- Validations 
+        if (!otp) return res.status(400).send({ message: "Invalid or Incorrect OTP" })
+        if (!email) return res.status(400).send({ message: "Invalid or Incorrect Email" })
 
-        res.status(200).send({message: "Verification Successful"})
+        const user = await userSchema.findOne({
+            email,
+            otp: Number(otp),
+
+        })
+
+
+
+        res.status(200).send({ message: "Verification Successful" })
     } catch (error) {
-        console.log(error)
+        res.status(500)({message: "Internal server error"})
     }
 }
 
