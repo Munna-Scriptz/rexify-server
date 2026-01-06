@@ -57,8 +57,8 @@ const verifyOTP = async (req, res) => {
         })
 
         // ------ Validations 
-        if(!user) return res.status(400).send({ message: "OTP is invalid or expired" })
-        
+        if (!user) return res.status(400).send({ message: "OTP is invalid or expired" })
+
         // ------- Modifying DB 
         user.isVerified = true
         user.otp = null
@@ -74,6 +74,19 @@ const verifyOTP = async (req, res) => {
 
 
 // ========================== Resend OTP ==========================
+const resendOTP = (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!email) return res.status(400).send({ message: "Invalid or Incorrect Email" })
+        if (!otp) return res.status(400).send({ message: "Invalid or Incorrect OTP" })
+
+
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+}
+
 
 // ========================== Sign In ==========================
 
@@ -81,4 +94,4 @@ const verifyOTP = async (req, res) => {
 
 
 
-module.exports = { signUp, verifyOTP }
+module.exports = { signUp, verifyOTP, resendOTP }
