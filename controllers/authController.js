@@ -74,14 +74,28 @@ const verifyOTP = async (req, res) => {
 
 
 // ========================== Resend OTP ==========================
-const resendOTP = (req, res) => {
+const resendOTP = async (req, res) => {
     try {
-        const { email, otp } = req.body;
+        const { email } = req.body;
 
         if (!email) return res.status(400).send({ message: "Invalid or Incorrect Email" })
-        if (!otp) return res.status(400).send({ message: "Invalid or Incorrect OTP" })
+        // --------- Find From DB 
+        const user = await userSchema.findOne({
+            email,
+            isVerified: false
+        })
+        // ------ Validations 
+        if (!user) return res.status(400).send({ message: "User with this email does't exist" })
 
+        // ------- Re-generate otp and expiryTime and send it to db 
+        const OTP = generateOTP()
+        user.otp = OTP
+        user.otpExpires = Date.now() + 5 * 60 * 1000
+        user.save()
+        sendEmail({ email, subject: "Email Verification", OTP: OTP, template: verifyOtpTemp })
 
+        // -------------- Success 
+        res.status(201).send({ message: "New OTP has been sent!" })
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
     }

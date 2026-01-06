@@ -1,6 +1,6 @@
 const verifyOtpTemp = ({ otp }) => {
     return `
-        <body style="margin:0; padding:0; background:#eef1f5; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+        <body style="margin:0; padding:0; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
 
   <table width="100%" cellpadding="0" cellspacing="0" style="padding:60px 0;">
     <tr>
