@@ -1,6 +1,6 @@
 const userSchema = require("../models/userSchema")
 const { sendEmail } = require("../services/emailServices")
-const { verifyOtpTemp } = require("../services/emailTemp")
+const { verifyOtpTemp, forgetPassTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
 const { generateAccToken, generateRefToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
@@ -19,7 +19,7 @@ const signUp = async (req, res) => {
 
         // ------------- Send Email 
         const OTP = generateOTP()
-        sendEmail({ email, subject: "Email Verification", OTP: OTP, template: verifyOtpTemp })
+        sendEmail({ email, subject: "Email Verification", item: OTP, template: verifyOtpTemp })
 
         // ----------- Sent to DB 
         const user = new userSchema({
@@ -93,7 +93,7 @@ const resendOTP = async (req, res) => {
         user.otp = OTP
         user.otpExpires = Date.now() + 5 * 60 * 1000
         user.save()
-        sendEmail({ email, subject: "Email Verification", OTP: OTP, template: verifyOtpTemp })
+        sendEmail({ email, subject: "Email Verification", item: OTP, template: verifyOtpTemp })
 
         // -------------- Success 
         res.status(201).send({ message: "New OTP has been sent!" })
@@ -134,8 +134,22 @@ const signIn = async (req, res) => {
 }
 
 // ========================== Forget password ==========================
-const forgetPassword = (req, res) => {
+const forgetPassword = async (req, res) => {
     try {
+        const { email } = req.body
+
+        // ----------- Validation 
+        if (!email) return res.status(400).send({ message: 'Email is required!' })
+        if (!isValidEmail(email)) return res.status(400).send({ message: 'Email is not valid!' })
+
+        // ----------- Find From db
+        const existingUser = await userSchema.findOne({ email })
+        if (!existingUser) return res.status(400).send({ message: `email is not registered!` })
+
+        // ------------- Send forget link 
+
+        sendEmail({ email, subject: "Forget password", item: OTP, template: forgetPassTemp })
+
 
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
