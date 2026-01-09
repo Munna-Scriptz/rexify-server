@@ -134,8 +134,14 @@ const signIn = async (req, res) => {
 }
 
 // ========================== Forget password ==========================
+const forgetPassword = (req, res) => {
+    try {
+
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+}
 
 
 
-
-module.exports = { signUp, verifyOTP, resendOTP, signIn }
+module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword }
