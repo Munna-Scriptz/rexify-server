@@ -121,7 +121,10 @@ const signIn = async (req, res) => {
         if (!isValidPassword) return res.status(400).send({ message: 'Invalid or incorrect password!' })
 
         // ------------- JWT token 
-        generateToken(existingUser)
+        const token = generateToken(existingUser)
+        req.user = token
+        
+        console.log(req.user)
 
         // ------------ Success 
         res.status(200).send({ message: "SignIn Successfully completed!" })
