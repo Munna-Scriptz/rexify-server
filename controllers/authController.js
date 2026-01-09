@@ -2,7 +2,7 @@ const userSchema = require("../models/userSchema")
 const { sendEmail } = require("../services/emailServices")
 const { verifyOtpTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
-const { generateToken } = require("../services/tokens")
+const { generateAccToken, generateRefToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 
 // ========================== Sign Up ==========================
@@ -120,11 +120,11 @@ const signIn = async (req, res) => {
         const isValidPassword = await existingUser.comparePassword(password)
         if (!isValidPassword) return res.status(400).send({ message: 'Invalid or incorrect password!' })
 
-        // ------------- JWT token 
-        const token = generateToken(existingUser)
-        req.user = token
-        
-        console.log(req.user)
+        // ------------- JWT token and cookie
+        const accToken = generateAccToken(existingUser)
+        const refToken = generateRefToken(existingUser)
+        res.cookie("X-AS-TOKEN", accToken)
+        res.cookie("X-RF-TOKEN", refToken)
 
         // ------------ Success 
         res.status(200).send({ message: "SignIn Successfully completed!" })

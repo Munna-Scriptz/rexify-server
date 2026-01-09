@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken")
 
 
-const generateToken = (data) => {
+const generateAccToken = (data) => {
     try {
         const token = jwt.sign({
             _id: data._id,
@@ -15,8 +15,22 @@ const generateToken = (data) => {
     }
 }
 
+const generateRefToken = (data) => {
+    try {
+        const token = jwt.sign({
+            _id: data._id,
+            email: data.email
+
+        }, process.env.JWT_SEC, { expiresIn: '15d' });
+        return token
+
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 
 
-module.exports = { generateToken }
+
+module.exports = { generateAccToken, generateRefToken }
