@@ -11,7 +11,7 @@ const generateAccToken = (data) => {
         return token
 
     } catch (error) {
-        console.log(error)
+        return null
     }
 }
 
@@ -25,12 +25,20 @@ const generateRefToken = (data) => {
         return token
 
     } catch (error) {
-        console.log(error)
+        return null
+    }
+}
+
+const verifyToken = (token) => {
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SEC);
+        return decoded
+
+    } catch (error) {
+        return null
     }
 }
 
 
 
-
-
-module.exports = { generateAccToken, generateRefToken }
+module.exports = { generateAccToken, generateRefToken, verifyToken }
