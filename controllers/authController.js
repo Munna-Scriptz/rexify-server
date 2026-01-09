@@ -2,6 +2,7 @@ const userSchema = require("../models/userSchema")
 const { sendEmail } = require("../services/emailServices")
 const { verifyOtpTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
+const { generateToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 
 // ========================== Sign Up ==========================
@@ -119,6 +120,8 @@ const signIn = async (req, res) => {
         const isValidPassword = await existingUser.comparePassword(password)
         if (!isValidPassword) return res.status(400).send({ message: 'Invalid or incorrect password!' })
 
+        // ------------- JWT token 
+        generateToken(existingUser)
 
         // ------------ Success 
         res.status(200).send({ message: "SignIn Successfully completed!" })
@@ -126,6 +129,8 @@ const signIn = async (req, res) => {
         res.status(500).send({ message: "Internal server error" })
     }
 }
+
+// ========================== Forget password ==========================
 
 
 
