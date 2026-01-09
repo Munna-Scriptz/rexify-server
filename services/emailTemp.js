@@ -280,7 +280,7 @@ const forgetPassTemp = (item) => {
                   color:#666;
                   line-height:1.6;
                 ">
-                  This link will expire in <b>15 minutes</b>.<br/>
+                  This link will expire in <b>2 hours</b>.<br/>
                   If you didn’t request this, you can safely ignore this email.
                 </p>
 

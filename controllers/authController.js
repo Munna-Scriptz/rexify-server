@@ -2,7 +2,7 @@ const userSchema = require("../models/userSchema")
 const { sendEmail } = require("../services/emailServices")
 const { verifyOtpTemp, forgetPassTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
-const { generateAccToken, generateRefToken } = require("../services/tokens")
+const { generateAccToken, generateRefToken, genResetPassToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 
 // ========================== Sign Up ==========================
@@ -147,10 +147,11 @@ const forgetPassword = async (req, res) => {
         if (!existingUser) return res.status(400).send({ message: `email is not registered!` })
 
         // ------------- Send forget link 
+        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:5173/'}reset/?sec=${genResetPassToken(existingUser)}`
+        sendEmail({ email, subject: "Forget password", item: forgetPassLink, template: forgetPassTemp })
 
-        sendEmail({ email, subject: "Forget password", item: OTP, template: forgetPassTemp })
-
-
+        // --------- Success 
+        res.status(200).send({ message: "Reset password link has been sent!" })
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
     }

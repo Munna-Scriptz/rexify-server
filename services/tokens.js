@@ -5,7 +5,8 @@ const generateAccToken = (data) => {
     try {
         const token = jwt.sign({
             _id: data._id,
-            email: data.email
+            email: data.email,
+            role: data.role
 
         }, process.env.JWT_SEC, { expiresIn: '2h' });
         return token
@@ -19,9 +20,24 @@ const generateRefToken = (data) => {
     try {
         const token = jwt.sign({
             _id: data._id,
-            email: data.email
+            email: data.email,
+            role: data.role
 
         }, process.env.JWT_SEC, { expiresIn: '15d' });
+        return token
+
+    } catch (error) {
+        return null
+    }
+}
+
+const genResetPassToken = (data) => {
+    try {
+        const token = jwt.sign({
+            _id: data._id,
+            email: data.email
+
+        }, process.env.JWT_SEC, { expiresIn: '2h' });
         return token
 
     } catch (error) {
@@ -41,4 +57,4 @@ const verifyToken = (token) => {
 
 
 
-module.exports = { generateAccToken, generateRefToken, verifyToken }
+module.exports = { generateAccToken, generateRefToken, verifyToken, genResetPassToken }
