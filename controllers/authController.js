@@ -172,12 +172,9 @@ const resetPassword = async (req, res) => {
         // --------------- Modifying password 
         // Hash password
         const hashedPass = await bcrypt.hash(newPassword, 10);
-        console.log(hashedPass)
-
+        
         user.password = hashedPass
         user.save()
-
-        console.log(user)
 
         // --------------- Success 
         res.status(200).send({ message: "Your password has been updated!" })

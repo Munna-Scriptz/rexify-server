@@ -7,7 +7,7 @@ const { authMiddleware } = require('../middleware/authMiddleware')
 router.post('/signUp', signUp)
 router.post('/verifyOTP', verifyOTP)
 router.post('/resendOTP', resendOTP)
-router.post('/signIn', authMiddleware, signIn)
+router.post('/signIn', signIn)
 router.post('/forgetPassword', forgetPassword)
 router.post('/resetPassword', resetPassword)
 
