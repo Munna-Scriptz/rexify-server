@@ -1,4 +1,5 @@
 const userSchema = require("../models/userSchema")
+const bcrypt = require("bcrypt")
 const { sendEmail } = require("../services/emailServices")
 const { verifyOtpTemp, forgetPassTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
@@ -162,17 +163,21 @@ const resetPassword = async (req, res) => {
     try {
         const { sec } = req.query
         const { newPassword } = req.body
-        
+
         // ------------- Verify token 
         const decoded = verifyToken(sec)
-        
+
         const user = await userSchema.findOne({ email: decoded.email }).select("password email")
-        
+
         // --------------- Modifying password 
-        user.password = newPassword
+        // Hash password
+        const hashedPass = await bcrypt.hash(newPassword, 10);
+        console.log(hashedPass)
+
+        user.password = hashedPass
         user.save()
 
-        console.log(user) 
+        console.log(user)
 
         // --------------- Success 
         res.status(200).send({ message: "Your password has been updated!" })
