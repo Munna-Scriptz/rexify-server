@@ -2,7 +2,7 @@ const userSchema = require("../models/userSchema")
 const { sendEmail } = require("../services/emailServices")
 const { verifyOtpTemp, forgetPassTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
-const { generateAccToken, generateRefToken, genResetPassToken } = require("../services/tokens")
+const { generateAccToken, generateRefToken, genResetPassToken, verifyToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 
 // ========================== Sign Up ==========================
@@ -147,7 +147,7 @@ const forgetPassword = async (req, res) => {
         if (!existingUser) return res.status(400).send({ message: `email is not registered!` })
 
         // ------------- Send forget link 
-        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:5173/'}reset/?sec=${genResetPassToken(existingUser)}`
+        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:8000/'}auth/resetPassword/?sec=${genResetPassToken(existingUser)}`
         sendEmail({ email, subject: "Forget password", item: forgetPassLink, template: forgetPassTemp })
 
         // --------- Success 
@@ -158,11 +158,24 @@ const forgetPassword = async (req, res) => {
 }
 
 // ========================== Reset password ==========================
-const resetPassword = (req, res) => {
+const resetPassword = async (req, res) => {
     try {
+        const { sec } = req.query
+        const { newPassword } = req.body
+        
+        // ------------- Verify token 
+        const decoded = verifyToken(sec)
+        
+        const user = await userSchema.findOne({ email: decoded.email }).select("password email")
+        
+        // --------------- Modifying password 
+        user.password = newPassword
+        user.save()
 
+        console.log(user) 
 
-
+        // --------------- Success 
+        res.status(200).send({ message: "Your password has been updated!" })
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
     }
