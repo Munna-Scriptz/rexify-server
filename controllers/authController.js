@@ -157,6 +157,16 @@ const forgetPassword = async (req, res) => {
     }
 }
 
+// ========================== Reset password ==========================
+const resetPassword = (req, res) => {
+    try {
 
 
-module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword }
+
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+}
+
+
+module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword, resetPassword }
