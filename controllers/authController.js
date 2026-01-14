@@ -164,10 +164,15 @@ const resetPassword = async (req, res) => {
         const { sec } = req.query
         const { newPassword } = req.body
 
+        if(!sec) res.status(400).send({ message: "Invalid request" })
+        if(!newPassword) res.status(400).send({ message: "New password is required!" })
+
         // ------------- Verify token 
         const decoded = verifyToken(sec)
+        if(!decoded) res.status(400).send({ message: "Invalid request" })
 
         const user = await userSchema.findOne({ email: decoded.email }).select("password email")
+        if(!user) res.status(400).send({ message: "Couldn't found the user!" })
 
         // --------------- Modifying password 
         // Hash password
