@@ -76,7 +76,6 @@ const verifyOTP = async (req, res) => {
     }
 }
 
-
 // ========================== Resend OTP ==========================
 const resendOTP = async (req, res) => {
     try {
@@ -104,7 +103,6 @@ const resendOTP = async (req, res) => {
         res.status(500).send({ message: "Internal server error" })
     }
 }
-
 
 // ========================== Sign In ==========================
 const signIn = async (req, res) => {
@@ -182,10 +180,9 @@ const resetPassword = async (req, res) => {
             resetPassTkn: hashToken,
             resetPassExp: { $gt: Date.now() }
         }).select("password email")
-        if (!existingUser) return res.status(400).send({ message: "You have already reset your password!" })
+        if (!existingUser) return res.status(400).send({ message: "Your link is invalid or expired!" })
 
         // --------------- Save modified  
-
         existingUser.password = newPassword
         existingUser.resetPassTkn = undefined
         existingUser.resetPassExp = undefined
@@ -194,7 +191,7 @@ const resetPassword = async (req, res) => {
         // --------------- Success 
         res.status(200).send({ message: "Your password has been updated!" })
     } catch (error) {
-        res.status(500).send({ message: "Internal server error" }, error)
+        res.status(500).send({ message: "Internal server error" })
     }
 }
 
