@@ -1,19 +1,20 @@
-const genResetToken = (data) => {
+const crypto = require("crypto")
+
+const genResetToken = () => {
     try {
-        const token = jwt.sign({
-            _id: data._id,
-            email: data.email
+        const token = crypto.randomBytes(10).toString("hex") // token created
+        const hashToken = crypto.createHash("sha256").update(token).digest("hex") // Hash created from token
 
-        }, process.env.JWT_SEC, { expiresIn: '2h' });
-        return token
-
+        return { token, hashToken }
     } catch (error) {
         return null
     }
 }
 
-const verifyResetToken = (token) => {
-    
+const hashResetToken = (token) => {
+    const hashToken = crypto.createHash("sha256").update(token).digest("hex") // Hash created from token
+
+    return hashToken
 }
 
-module.exports = { genResetToken, verifyResetToken }
+module.exports = { genResetToken, hashResetToken }

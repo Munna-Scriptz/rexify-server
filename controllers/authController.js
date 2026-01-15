@@ -5,7 +5,7 @@ const { verifyOtpTemp, forgetPassTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
 const { generateAccToken, generateRefToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
-const { genResetToken, verifyResetToken } = require("../utils/resetPassword")
+const { genResetToken, hashResetToken } = require("../utils/resetPassword")
 
 // ========================== Sign Up ==========================
 const signUp = async (req, res) => {
@@ -150,15 +150,15 @@ const forgetPassword = async (req, res) => {
         if (!existingUser) return res.status(400).send({ message: `email is not registered!` })
 
         // ------------- Send forget link to email
-        const resetPassTkn = genResetToken(existingUser)
-        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:8000/'}auth/resetPassword/${resetPassTkn}`
+        const { token, hashToken } = genResetToken()
+        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:8000/'}auth/resetPassword/${token}`
         sendEmail({ email, subject: "Forget password", item: forgetPassLink, template: forgetPassTemp })
-        existingUser.resetPassTkn = resetPassTkn
+        existingUser.resetPassTkn = hashToken
         existingUser.resetPassExp = Date.now() + 60 * 60 * 1000
         existingUser.save()
 
 
-        // --------- Success 
+        // -------------- Success 
         res.status(200).send({ message: "Reset password link has been sent!" })
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
@@ -171,22 +171,29 @@ const resetPassword = async (req, res) => {
         const { token } = req.params
         const { newPassword } = req.body
 
-        if(!token) res.status(400).send({ message: "Invalid request" })
-        if(!newPassword) res.status(400).send({ message: "New password is required!" })
+        if (!token) res.status(400).send({ message: "Invalid request" })
+        if (!newPassword) res.status(400).send({ message: "New password is required!" })
 
-        // ------------- Verify token 
-        const decoded = verifyResetToken(token)
-        if(!decoded) res.status(400).send({ message: "Invalid token request" })
+        // ------------- Verify hash and update token 
+        const hashToken = hashResetToken(token)
+        if (!hashToken) res.status(400).send({ message: "Something went wrong!" })
 
-        // const user = await userSchema.findOne({ email: decoded.email }).select("password email")
-        // if(!user) res.status(400).send({ message: "Couldn't found the user!" })
+        const existingUser = await userSchema.findOneAndUpdate(
+            {
+                resetPassTkn: hashToken,
+                resetPassExp: { $gt: Date.now() }
+            }, {
+            password: newPassword
+        }).select("password email")
+        if(!existingUser) res.status(400).send({ message: "Couldn't found the user!" })
 
         // // --------------- Modifying password 
         // // Hash password
         // const hashedPass = await bcrypt.hash(newPassword, 10);
-        
-        // user.password = hashedPass
-        // user.save()
+
+        existingUser.resetPassTkn = undefined
+        existingUser.resetPassExp = undefined
+        existingUser.save()
 
         // --------------- Success 
         res.status(200).send({ message: "Your password has been updated!" })
