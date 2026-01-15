@@ -171,18 +171,18 @@ const resetPassword = async (req, res) => {
         const { token } = req.params
         const { newPassword } = req.body
 
-        if (!token) res.status(400).send({ message: "Invalid request" })
-        if (!newPassword) res.status(400).send({ message: "New password is required!" })
+        if (!token) return res.status(400).send({ message: "Invalid request" })
+        if (!newPassword) return res.status(400).send({ message: "New password is required!" })
 
         // ------------- Verify hash and update token 
         const hashToken = hashResetToken(token)
-        if (!hashToken) res.status(400).send({ message: "Something went wrong!" })
+        if (!hashToken) return res.status(400).send({ message: "Something went wrong!" })
 
         const existingUser = await userSchema.findOne({
             resetPassTkn: hashToken,
             resetPassExp: { $gt: Date.now() }
         }).select("password email")
-        if (!existingUser) res.status(400).send({ message: "You have already reset your password!" })
+        if (!existingUser) return res.status(400).send({ message: "You have already reset your password!" })
 
         // --------------- Save modified  
 
@@ -194,7 +194,7 @@ const resetPassword = async (req, res) => {
         // --------------- Success 
         res.status(200).send({ message: "Your password has been updated!" })
     } catch (error) {
-        res.status(500).send({ message: "Internal server error" })
+        res.status(500).send({ message: "Internal server error" }, error)
     }
 }
 
