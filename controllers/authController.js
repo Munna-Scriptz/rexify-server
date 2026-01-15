@@ -64,6 +64,7 @@ const verifyOTP = async (req, res) => {
         // ------- Modifying DB 
         user.isVerified = true
         user.otp = null
+        user.otpExpires = undefined
         user.save()
 
 
@@ -147,9 +148,14 @@ const forgetPassword = async (req, res) => {
         const existingUser = await userSchema.findOne({ email })
         if (!existingUser) return res.status(400).send({ message: `email is not registered!` })
 
-        // ------------- Send forget link 
-        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:8000/'}auth/resetPassword/?sec=${genResetPassToken(existingUser)}`
+        // ------------- Send forget link to email
+        const resetPassTkn = genResetPassToken(existingUser)
+        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:8000/'}auth/resetPassword?sec=${resetPassTkn}`
         sendEmail({ email, subject: "Forget password", item: forgetPassLink, template: forgetPassTemp })
+        existingUser.resetPassTkn = resetPassTkn
+        existingUser.resetPassExp = Date.now() + 60 * 60 * 1000
+        existingUser.save()
+
 
         // --------- Success 
         res.status(200).send({ message: "Reset password link has been sent!" })

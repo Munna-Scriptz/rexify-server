@@ -35,7 +35,13 @@ const userSchema = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false
-    }
+    },
+    resetPassTkn : {
+        type: String
+    },
+    resetPassExp: {
+        type: Date
+    },
 
 }, { timestamps: true })
 
