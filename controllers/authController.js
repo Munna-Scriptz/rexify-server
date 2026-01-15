@@ -178,19 +178,15 @@ const resetPassword = async (req, res) => {
         const hashToken = hashResetToken(token)
         if (!hashToken) res.status(400).send({ message: "Something went wrong!" })
 
-        const existingUser = await userSchema.findOneAndUpdate(
-            {
-                resetPassTkn: hashToken,
-                resetPassExp: { $gt: Date.now() }
-            }, {
-            password: newPassword
+        const existingUser = await userSchema.findOne({
+            resetPassTkn: hashToken,
+            resetPassExp: { $gt: Date.now() }
         }).select("password email")
-        if(!existingUser) res.status(400).send({ message: "Couldn't found the user!" })
+        if (!existingUser) res.status(400).send({ message: "You have already reset your password!" })
 
-        // // --------------- Modifying password 
-        // // Hash password
-        // const hashedPass = await bcrypt.hash(newPassword, 10);
+        // --------------- Save modified  
 
+        existingUser.password = newPassword
         existingUser.resetPassTkn = undefined
         existingUser.resetPassExp = undefined
         existingUser.save()

@@ -12,9 +12,13 @@ const genResetToken = () => {
 }
 
 const hashResetToken = (token) => {
-    const hashToken = crypto.createHash("sha256").update(token).digest("hex") // Hash created from token
+    try {
+        const hashToken = crypto.createHash("sha256").update(token).digest("hex") // Hash created from token
 
-    return hashToken
+        return hashToken
+    } catch (error) {
+        return null
+    }
 }
 
 module.exports = { genResetToken, hashResetToken }
