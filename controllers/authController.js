@@ -3,8 +3,9 @@ const bcrypt = require("bcrypt")
 const { sendEmail } = require("../services/emailServices")
 const { verifyOtpTemp, forgetPassTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
-const { generateAccToken, generateRefToken, genResetPassToken, verifyToken } = require("../services/tokens")
+const { generateAccToken, generateRefToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
+const { genResetToken, verifyResetToken } = require("../utils/resetPassword")
 
 // ========================== Sign Up ==========================
 const signUp = async (req, res) => {
@@ -149,8 +150,8 @@ const forgetPassword = async (req, res) => {
         if (!existingUser) return res.status(400).send({ message: `email is not registered!` })
 
         // ------------- Send forget link to email
-        const resetPassTkn = genResetPassToken(existingUser)
-        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:8000/'}auth/resetPassword?sec=${resetPassTkn}`
+        const resetPassTkn = genResetToken(existingUser)
+        const forgetPassLink = `${process.env.CLIENT_URL || 'http://localhost:8000/'}auth/resetPassword/${resetPassTkn}`
         sendEmail({ email, subject: "Forget password", item: forgetPassLink, template: forgetPassTemp })
         existingUser.resetPassTkn = resetPassTkn
         existingUser.resetPassExp = Date.now() + 60 * 60 * 1000
@@ -167,25 +168,25 @@ const forgetPassword = async (req, res) => {
 // ========================== Reset password ==========================
 const resetPassword = async (req, res) => {
     try {
-        const { sec } = req.query
+        const { token } = req.params
         const { newPassword } = req.body
 
-        if(!sec) res.status(400).send({ message: "Invalid request" })
+        if(!token) res.status(400).send({ message: "Invalid request" })
         if(!newPassword) res.status(400).send({ message: "New password is required!" })
 
         // ------------- Verify token 
-        const decoded = verifyToken(sec)
-        if(!decoded) res.status(400).send({ message: "Invalid request" })
+        const decoded = verifyResetToken(token)
+        if(!decoded) res.status(400).send({ message: "Invalid token request" })
 
-        const user = await userSchema.findOne({ email: decoded.email }).select("password email")
-        if(!user) res.status(400).send({ message: "Couldn't found the user!" })
+        // const user = await userSchema.findOne({ email: decoded.email }).select("password email")
+        // if(!user) res.status(400).send({ message: "Couldn't found the user!" })
 
-        // --------------- Modifying password 
-        // Hash password
-        const hashedPass = await bcrypt.hash(newPassword, 10);
+        // // --------------- Modifying password 
+        // // Hash password
+        // const hashedPass = await bcrypt.hash(newPassword, 10);
         
-        user.password = hashedPass
-        user.save()
+        // user.password = hashedPass
+        // user.save()
 
         // --------------- Success 
         res.status(200).send({ message: "Your password has been updated!" })
