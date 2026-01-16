@@ -163,7 +163,7 @@ const forgetPassword = async (req, res) => {
     }
 }
 
-// ========================== Reset password ==========================
+// ========================== Reset password ========================== 
 const resetPassword = async (req, res) => {
     try {
         const { token } = req.params
