@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    resetPassTkn : {
+    resetPassTkn: {
         type: String
     },
     resetPassExp: {

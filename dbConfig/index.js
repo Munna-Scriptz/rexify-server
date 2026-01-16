@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 
-const dbConfig = ()=>{
-    return(
+const dbConfig = () => {
+    return (
         mongoose.connect(process.env.DB_STRING)
-        .then(() => console.log('DB Connected!'))
+            .then(() => console.log('DB Connected!'))
     )
 }
 
