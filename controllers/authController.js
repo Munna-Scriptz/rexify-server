@@ -213,7 +213,7 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const { _id } = req.user
-        const { avatar, fullname, phone, address } = req.body
+        const { fullname, phone, address } = req.body
 
         const updateInfos = {}
         if (avatar) updateInfos.avatar = avatar
@@ -223,9 +223,7 @@ const updateProfile = async (req, res) => {
 
         const existingUser = await userSchema.findByIdAndUpdate(_id, updateInfos, { new: true })
 
-        res.send(existingUser)
-        // ------------- Success 
-        // res.status(200).send(userInfo)
+        res.status(202).send({ message: "Profile updated" })
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
     }
