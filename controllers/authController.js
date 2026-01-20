@@ -7,7 +7,7 @@ const { generateAccToken, generateRefToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 const { genResetToken, hashResetToken } = require("../utils/resetPassword")
 
-// ========================== Sign Up ==========================
+// ========================== Sign Up ===========================
 const signUp = async (req, res) => {
     try {
         const { email, password } = req.body
@@ -42,7 +42,7 @@ const signUp = async (req, res) => {
     }
 }
 
-// ========================== Verify OTP ==========================
+// ========================== Verify OTP =========================
 const verifyOTP = async (req, res) => {
     try {
         const { email, otp } = req.body
@@ -104,7 +104,7 @@ const resendOTP = async (req, res) => {
     }
 }
 
-// ========================== Sign In ==========================
+// ========================== Sign In =============================
 const signIn = async (req, res) => {
     try {
         const { email, password } = req.body
@@ -134,7 +134,7 @@ const signIn = async (req, res) => {
     }
 }
 
-// ========================== Forget password ==========================
+// ========================== Forget password ======================
 const forgetPassword = async (req, res) => {
     try {
         const { email } = req.body
@@ -163,7 +163,7 @@ const forgetPassword = async (req, res) => {
     }
 }
 
-// ========================== Reset password ========================== 
+// ========================== Reset password =======================
 const resetPassword = async (req, res) => {
     try {
         const { token } = req.params
@@ -195,5 +195,22 @@ const resetPassword = async (req, res) => {
     }
 }
 
+// ========================== Get Profile ========================== 
+const getProfile = async (req, res) => {
+    try {
+        const { _id } = req.user
+        const userInfo = await userSchema.findById(_id).select('-password -otp -otpExpires -updatedAt')
+        if(!userInfo) return res.status(404).send({ message: "User doesn't exist" })
 
-module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword, resetPassword }
+        // ------------- Success 
+        res.status(200).send(userInfo)
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+}
+// ========================== Update Profile =======================
+// ========================== Upload Image =========================
+
+
+
+module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword, resetPassword, getProfile }
