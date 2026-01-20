@@ -65,7 +65,7 @@ const verifyOTP = async (req, res) => {
         // ------- Modifying DB 
         user.isVerified = true
         user.otp = null
-        user.otpExpires = undefined
+        user.otpExpires = null
         user.save()
 
 
@@ -85,7 +85,8 @@ const resendOTP = async (req, res) => {
         // --------- Find From DB 
         const user = await userSchema.findOne({
             email,
-            isVerified: false
+            isVerified: false,
+            otpExpires: { gt: new Date() }
         })
         // ------ Validations 
         if (!user) return res.status(400).send({ message: "User with this email does't exist" })
@@ -200,7 +201,7 @@ const getProfile = async (req, res) => {
     try {
         const { _id } = req.user
         const userInfo = await userSchema.findById(_id).select('-password -otp -otpExpires -updatedAt')
-        if(!userInfo) return res.status(404).send({ message: "User doesn't exist" })
+        if (!userInfo) return res.status(404).send({ message: "User doesn't exist" })
 
         // ------------- Success 
         res.status(200).send(userInfo)
@@ -209,8 +210,29 @@ const getProfile = async (req, res) => {
     }
 }
 // ========================== Update Profile =======================
+const updateProfile = async (req, res) => {
+    try {
+        const { _id } = req.user
+        const { avatar, fullname, phone, address } = req.body
+
+        const updateInfos = {}
+        if (avatar) updateInfos.avatar = avatar
+        if (fullname) updateInfos.fullname = fullname
+        if (phone) updateInfos.phone = phone
+        if (address) updateInfos.address = address
+
+        const existingUser = await userSchema.findByIdAndUpdate(_id, updateInfos, { new: true })
+
+        res.send(existingUser)
+        // ------------- Success 
+        // res.status(200).send(userInfo)
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+}
+
 // ========================== Upload Image =========================
 
 
 
-module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword, resetPassword, getProfile }
+module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword, resetPassword, getProfile, updateProfile }
