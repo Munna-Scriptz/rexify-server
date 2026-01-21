@@ -216,8 +216,8 @@ const updateProfile = async (req, res) => {
         const { _id } = req.user
         const { fullname, phone, address } = req.body
 
-        const cloudRes = cloudUpload(req.file)
-
+        const cloudRes = await cloudUpload(req.file)
+        res.send(cloudRes)
 
         return
         const existingUser = await userSchema.findById(_id)
