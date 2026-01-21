@@ -1,17 +1,21 @@
+require('dotenv').config()
 const express = require("express")
 const cors = require("cors")
 const dbConfig = require("./dbConfig")
 const router = require("./routes")
 const cookieParser = require('cookie-parser')
-
-// ------------------- Uses 
+const cloudConfig = require('./services/cloudConfig')
 const app = express()
-require('dotenv').config()
+
+// ------------------- Middlewares 
 app.use(express.json())
 app.use(cookieParser()) 
 app.use(cors())
+// ------------------- Route 
 app.use(router)
+// ------------------- Database 
 dbConfig()
+cloudConfig()
 
 // ----------------------- Server Listener 
 app.listen(8000 , ()=>{
