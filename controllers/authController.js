@@ -221,15 +221,16 @@ const updateProfile = async (req, res) => {
         if (phone) updateInfos.phone = phone
         if (address) updateInfos.address = address
 
+        // ------- Find and update 
         const existingUser = await userSchema.findByIdAndUpdate(_id, updateInfos, { new: true })
 
+        // ------------- Success 
         res.status(202).send({ message: "Profile updated" })
     } catch (error) {
         res.status(500).send({ message: "Internal server error" })
     }
 }
 
-// ========================== Upload Image =========================
 
 
 
