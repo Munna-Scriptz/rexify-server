@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node --watch server.js",
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,6 +20,7 @@
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.0",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.12"
+    "nodemailer": "^7.0.12",
+    "nodemon": "^3.1.11"
   }
 }
