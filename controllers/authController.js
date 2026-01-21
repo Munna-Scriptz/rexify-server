@@ -215,14 +215,13 @@ const updateProfile = async (req, res) => {
     try {
         const { _id } = req.user
         const { fullname, phone, address } = req.body
-
-        const cloudRes = await cloudUpload(req.file)
-        res.send(cloudRes)
-
-        return
+        const avatar = req.file
         const existingUser = await userSchema.findById(_id)
-
-        if (avatar) existingUser.avatar = avatar
+        
+        if (avatar) {
+            const cloudRes = await cloudUpload(req.file)
+            existingUser.avatar = cloudRes.secure_url
+        } 
         if (fullname) existingUser.fullname = fullname
         if (phone) existingUser.phone = phone
         if (address) existingUser.address = address
