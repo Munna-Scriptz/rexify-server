@@ -6,6 +6,7 @@ const { generateOTP } = require("../services/helpers")
 const { generateAccToken, generateRefToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 const { genResetToken, hashResetToken } = require("../utils/resetPassword")
+const { cloudUpload } = require("../services/cloudUpload")
 
 // ========================== Sign Up ===========================
 const signUp = async (req, res) => {
@@ -215,14 +216,18 @@ const updateProfile = async (req, res) => {
         const { _id } = req.user
         const { fullname, phone, address } = req.body
 
-        const updateInfos = {}
-        if (avatar) updateInfos.avatar = avatar
-        if (fullname) updateInfos.fullname = fullname
-        if (phone) updateInfos.phone = phone
-        if (address) updateInfos.address = address
+        const cloudRes = cloudUpload(req.file)
 
-        // ------- Find and update 
-        const existingUser = await userSchema.findByIdAndUpdate(_id, updateInfos, { new: true })
+
+        return
+        const existingUser = await userSchema.findById(_id)
+
+        if (avatar) existingUser.avatar = avatar
+        if (fullname) existingUser.fullname = fullname
+        if (phone) existingUser.phone = phone
+        if (address) existingUser.address = address
+
+        existingUser.save()
 
         // ------------- Success 
         res.status(202).send({ message: "Profile updated" })
