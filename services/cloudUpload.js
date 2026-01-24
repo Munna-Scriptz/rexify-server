@@ -6,4 +6,13 @@ const cloudUpload = async (file) => {
     return await cloudinary.uploader.upload(dataUrl)
 }
 
-module.exports = { cloudUpload }
+const cloudDelete = async (publicId) => {
+    try {
+        const result = await cloudinary.uploader.destroy(publicId)
+        console.log(result)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+module.exports = { cloudUpload, cloudDelete }

@@ -6,7 +6,7 @@ const { generateOTP } = require("../services/helpers")
 const { generateAccToken, generateRefToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 const { genResetToken, hashResetToken } = require("../utils/resetPassword")
-const { cloudUpload } = require("../services/cloudUpload")
+const { cloudUpload, cloudDelete } = require("../services/cloudUpload")
 
 // ========================== Sign Up ===========================
 const signUp = async (req, res) => {
@@ -216,10 +216,17 @@ const updateProfile = async (req, res) => {
         const { _id } = req.user
         const { fullname, phone, address } = req.body
         const avatar = req.file
+
+        // ------- Find from DB 
         const existingUser = await userSchema.findById(_id)
         
         if (avatar) {
+            const userAvatarId = existingUser.avatar.split("/").pop().split(".").shift()
+            // --- Delete previous avatar
+            cloudDelete(`${userAvatarId}`)
+
             const cloudRes = await cloudUpload(req.file)
+            console.log(cloudRes)
             existingUser.avatar = cloudRes.secure_url
         } 
         if (fullname) existingUser.fullname = fullname
