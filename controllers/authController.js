@@ -1,9 +1,8 @@
 const userSchema = require("../models/userSchema")
-const bcrypt = require("bcrypt")
 const { sendEmail } = require("../services/emailServices")
 const { verifyOtpTemp, forgetPassTemp } = require("../services/emailTemp")
 const { generateOTP } = require("../services/helpers")
-const { generateAccToken, generateRefToken } = require("../services/tokens")
+const { generateAccToken, generateRefToken, verifyToken } = require("../services/tokens")
 const { isValidEmail } = require("../utils/validations")
 const { genResetToken, hashResetToken } = require("../utils/resetPassword")
 const { cloudUpload, cloudDelete } = require("../services/cloudUpload")
@@ -210,6 +209,7 @@ const getProfile = async (req, res) => {
         res.status(500).send({ message: "Internal server error" })
     }
 }
+
 // ========================== Update Profile =======================
 const updateProfile = async (req, res) => {
     try {
@@ -240,7 +240,27 @@ const updateProfile = async (req, res) => {
     }
 }
 
+// ========================== Refresh access token =================
+const refreshAccToken = (req, res) => {
+    try {
+        const refreshToken = req.cookies?.["X-RF-TOKEN"]
+
+        // ----- Validation 
+        if(!refreshToken) return res.status(400).send({ message: "Something went wrong. Please login" })
+
+        // -------- verify, generate and set it to cookies 
+        const decoded = verifyToken(refreshToken)
+        const accToken = generateAccToken(decoded)
+        res.cookie("X-AS-TOKEN", accToken)
+
+        // ---------- Success 
+        res.status(201).send("Token created")
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+}
 
 
 
-module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword, resetPassword, getProfile, updateProfile }
+
+module.exports = { signUp, verifyOTP, resendOTP, signIn, forgetPassword, resetPassword, getProfile, updateProfile, refreshAccToken }
