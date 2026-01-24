@@ -13,7 +13,7 @@ router.post('/signIn', signIn)
 router.post('/forgetPassword', forgetPassword)
 router.post('/resetPassword/:token', resetPassword)
 router.get('/profile', authMiddleware, getProfile)
-router.put('/updateProfile', authMiddleware, upload.single('avatar'), updateProfile)
+router.put('/updateProfile', authMiddleware, upload.single("avatar"), updateProfile)
 
 
 module.exports = router

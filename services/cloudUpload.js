@@ -1,15 +1,14 @@
 const cloudinary = require('cloudinary').v2;
 
-const cloudUpload = async (file) => {
+const cloudUpload = async ({ file, folderPath, folder }) => {
     const base64String = file.buffer.toString("base64")
     const dataUrl = `data:${file.mimetype};base64,${base64String}`
-    return await cloudinary.uploader.upload(dataUrl)
+    return await cloudinary.uploader.upload(dataUrl, { asset_folder: folderPath, folder })
 }
 
 const cloudDelete = async (publicId) => {
     try {
-        const result = await cloudinary.uploader.destroy(publicId)
-        console.log(result)
+        await cloudinary.uploader.destroy(publicId)
     } catch (error) {
         console.log(error)
     }

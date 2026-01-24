@@ -219,16 +219,14 @@ const updateProfile = async (req, res) => {
 
         // ------- Find from DB 
         const existingUser = await userSchema.findById(_id)
-        
+
         if (avatar) {
             const userAvatarId = existingUser.avatar.split("/").pop().split(".").shift()
             // --- Delete previous avatar
-            cloudDelete(`${userAvatarId}`)
-
-            const cloudRes = await cloudUpload(req.file)
-            console.log(cloudRes)
+            cloudDelete(`avatar/${userAvatarId}`)
+            const cloudRes = await cloudUpload({ file: avatar, folderPath: "rexify/user", folder: "avatar" })
             existingUser.avatar = cloudRes.secure_url
-        } 
+        }
         if (fullname) existingUser.fullname = fullname
         if (phone) existingUser.phone = phone
         if (address) existingUser.address = address
