@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const authRouter = require('./authRouter')
-const productRouter = require('./productsRouter')
+const auth = require('./auth')
+const category = require('./category')
 
-router.use('/auth', authRouter)
-router.use('/products', productRouter)
+// ------------ All routes 
+router.use('/auth', auth)
+router.use('/category', category)
 
 // --------- Not Found 
 router.use((req, res) => { res.status(404).send('404 Page Not Found') })
