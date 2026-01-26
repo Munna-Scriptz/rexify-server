@@ -8,11 +8,12 @@ const resHandler = {
         });
     },
 
-    error: (res, statusCode = 400, message) => {
+    error: (res, statusCode = 400, message, data = undefined) => {
         res.status(statusCode).json({
             success: false,
             statusCode,
             message,
+            data
         });
     }
 };
