@@ -1,6 +1,13 @@
+const resHandler = require("../utils/resHandler")
 
 const createCategory = (req, res) => {
-    res.send('Create Category')
+    try {
+        const { name, description } = req.body
+
+        
+    } catch (error) {
+        resHandler.error(res, 500, "Internal server error")
+    }
 }
 
 
