@@ -8,7 +8,7 @@ const createCategory = async (req, res) => {
         const thumbnail = req.file
 
         // ---------- Validations 
-        const existingCategory = await categorySchema.findOne({name})
+        const existingCategory = await categorySchema.findOne({ name })
         if (existingCategory) return resHandler.error(res, 400, "Category already exists")
         if (!name) return resHandler.error(res, 400, "Category name is required")
         if (!description) return resHandler.error(res, 400, "Category description is required")
@@ -33,6 +33,15 @@ const createCategory = async (req, res) => {
     }
 }
 
+const getCategories = async (req, res) => {
+    try {
+        const categories = await categorySchema.find({})
 
+        // ----------- Send to client 
+        resHandler.success(res, 200, undefined, categories)
+    } catch (error) {
+        resHandler.error(res, 500, "Internal server error")
+    }
+}
 
-module.exports = { createCategory }
+module.exports = { createCategory, getCategories }
