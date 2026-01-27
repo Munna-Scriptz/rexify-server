@@ -36,6 +36,7 @@ const createCategory = async (req, res) => {
 const getCategories = async (req, res) => {
     try {
         const categories = await categorySchema.find({})
+        if(!categories) return resHandler.error(res, 404, "Categories not found")
 
         // ----------- Send to client 
         resHandler.success(res, 200, undefined, categories)
