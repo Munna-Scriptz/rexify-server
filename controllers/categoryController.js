@@ -2,6 +2,7 @@ const categorySchema = require("../models/categorySchema")
 const { cloudUpload } = require("../services/cloudUpload")
 const resHandler = require("../utils/resHandler")
 
+// ================= Create Category =====================
 const createCategory = async (req, res) => {
     try {
         const { name, description } = req.body
@@ -33,6 +34,7 @@ const createCategory = async (req, res) => {
     }
 }
 
+// ================= Get All Category =====================
 const getCategories = async (req, res) => {
     try {
         const categories = await categorySchema.find({})
