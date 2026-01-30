@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.schema({
+const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -21,44 +21,70 @@ const productSchema = new mongoose.schema({
     discountPercentage: {
         type: Number,
         default: 0,
+        min: 0,
+        max: 100,
     },
     variants: [
         {
             sku: {
                 type: String,
                 required: true,
-                unique: true,
             },
             attributes: {
-                color: String,
-                required: true
+                color: {
+                    type: String,
+                    required: true
+                },
+                storage: {
+                    type: String,
+                },
+                ram: {
+                    type: String,
+                },
+                stock: {
+                    type: Number,
+                    required: true,
+                    min: 0
+                }
             },
-            size: {
-                type: String,
-                required: true,
-                enum: ['s', 'm', 'l', 'xl', 'xxl']
-            },
-            stock:{
-                type: Number,
-                required: true,
-            }
         }
     ],
-    tags: {
-        type: Array
+    brand: {
+        type: String,
     },
+    weight: {
+        type: Number,
+    },
+    warranty: {
+        type: String,
+        default: "No warranty"
+    },
+    shipping: {
+        type: String,
+        default: "Ships in 3-5 business days"
+    },
+    power: {
+        type: String,
+    },
+    tags: [
+        {
+            type: String,
+        },
+    ],
     thumbnail: {
         type: String,
         required: true,
     },
-    images: {
-        type: Array,
-    },
+    images: [
+        {
+            type: String,
+        },
+    ],
     isActive: {
         type: Boolean,
         default: true,
     }
 
-})
+}, { timestamps: true });
 
 module.exports = mongoose.model('product', productSchema)
