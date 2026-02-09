@@ -27,7 +27,6 @@ const createProduct = async (req, res) => {
         }
 
         // ---------- Save to DB ----------
-
         const product = productSchema({
             title,
             description,
