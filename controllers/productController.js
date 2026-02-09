@@ -22,16 +22,17 @@ const createProduct = async (req, res) => {
         if (!existCategory) return resHandler.error(res, 400, "Invalid category or doesn't exist")
         if (!price) return resHandler.error(res, 400, 'Price is required')
         // Variants 
-        if (Array.isArray(variants) || variants.length == 0) return resHandler.error(res, 400, 'Variants is required')
+        if (!Array.isArray(variants) || variants.length == 0) return resHandler.error(res, 400, 'Variants is required')
         for (const variant of variants) {
+            if (!variant.sku) return resHandler.error(res, 400, 'Product SKU is required')
             if (!variant.color) return resHandler.error(res, 400, 'Product color is required')
-            if (!variant.ram) return resHandler.error(res, 400, 'Product color is required')
-            if (!variant.storage) return resHandler.error(res, 400, 'Product color is required')
+            if (!variant.ram) return resHandler.error(res, 400, 'Product RAM is required')
+            if (!variant.storage) return resHandler.error(res, 400, 'Product Storage is required')
             if (!variant.stock || variant.stock < 1) return resHandler.error(res, 400, 'Stock is required and must be at least 1')
         }
         // SKU 
         const AllSku = variants.map(item => item.sku)
-        if (new Set(AllSku).size !== AllSku.length) return resHandler.error(res, 400, 'SKU is required')
+        if (new Set(AllSku).size !== AllSku.length) return resHandler.error(res, 400, 'SKU with this name already exists')
 
 
 
