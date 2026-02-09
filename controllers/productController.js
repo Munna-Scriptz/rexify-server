@@ -1,3 +1,4 @@
+const categorySchema = require("../models/categorySchema")
 const productSchema = require("../models/productSchema")
 const { cloudUpload } = require("../services/cloudUpload")
 const resHandler = require("../utils/resHandler")
@@ -12,6 +13,8 @@ const createProduct = async (req, res) => {
         if (!title) return resHandler.error(res, 400, 'Title is required')
         if (!description) return resHandler.error(res, 400, 'Description is required')
         if (!category) return resHandler.error(res, 400, 'Category is required')
+        const existCategory = await categorySchema.findById(category)
+        if (!existCategory) return resHandler.error(res, 400, "Invalid category or doesn't exist")
         if (!price) return resHandler.error(res, 400, 'Price is required')
         if (!thumbnail) return resHandler.error(res, 400, 'Product thumbnail is required')
 
@@ -41,6 +44,7 @@ const createProduct = async (req, res) => {
         // ------------ Success 
         res.send("Created Successfully")
     } catch (error) {
+        console.log(error)
         resHandler.error(res, 500, 'Internal Server Error')
     }
 }
