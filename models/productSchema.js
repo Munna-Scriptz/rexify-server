@@ -30,23 +30,21 @@ const productSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
-            attributes: {
-                color: {
-                    type: String,
-                    required: true
-                },
-                storage: {
-                    type: String,
-                },
-                ram: {
-                    type: String,
-                },
-                stock: {
-                    type: Number,
-                    required: true,
-                    min: 0
-                }
+            color: {
+                type: String,
+                required: true
             },
+            storage: {
+                type: String,
+            },
+            ram: {
+                type: String,
+            },
+            stock: {
+                type: Number,
+                required: true,
+                min: 0
+            }
         }
     ],
     brand: {
