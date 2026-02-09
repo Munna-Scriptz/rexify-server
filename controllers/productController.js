@@ -18,10 +18,15 @@ const createProduct = async (req, res) => {
         if (!price) return resHandler.error(res, 400, 'Price is required')
         if (Array.isArray(variants) || variants.length == 0) return resHandler.error(res, 400, 'Variants is required')
         for (const variant of variants) {
-            if (!variant.sku) return resHandler.error(res, 400, 'SKU is required')
             if (!variant.color) return resHandler.error(res, 400, 'Product color is required')
-            if (!variant.stock) return resHandler.error(res, 400, 'SKU is required')
+            if (!variant.ram) return resHandler.error(res, 400, 'Product color is required')
+            if (!variant.storage) return resHandler.error(res, 400, 'Product color is required')
+            if (!variant.stock || variant.stock < 1) return resHandler.error(res, 400, 'Stock is required and must be at least 1')
         }
+        // ------- SKU validation 
+        const AllSku = variants.map(item => item.sku)
+        if (new Set(AllSku).size !== AllSku.length) return resHandler.error(res, 400, 'SKU is required')
+
 
 
         // if (!thumbnail) return resHandler.error(res, 400, 'Product thumbnail is required')
