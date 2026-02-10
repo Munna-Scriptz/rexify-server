@@ -56,6 +56,7 @@ const createProduct = async (req, res) => {
             category,
             price,
             discountPercentage,
+            variants,
             images: imageUrls,
             thumbnail: thumbRes.secure_url,
             brand,
