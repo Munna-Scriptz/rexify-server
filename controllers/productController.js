@@ -5,7 +5,7 @@ const resHandler = require("../utils/resHandler")
 
 const createProduct = async (req, res) => {
     try {
-        const { title, slug, description, category, price, discountPercentage, variants, brand, weight, warranty, shipping, power, tags, isActive } = req.body
+        const { title, slug, description, category, price, discountPercentage, variants, brand, badge, weight, warranty, shipping, power, tags, isActive } = req.body
         const thumbnail = req.files?.thumbnail?.[0]
         const images = req.files?.images
 
@@ -60,6 +60,7 @@ const createProduct = async (req, res) => {
             images: imageUrls,
             thumbnail: thumbRes.secure_url,
             brand,
+            badge,
             weight,
             warranty,
             shipping,

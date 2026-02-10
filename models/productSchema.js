@@ -8,7 +8,9 @@ const productSchema = new mongoose.Schema({
     slug: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true
     },
     description: {
         type: String,
@@ -22,6 +24,7 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
+        min: 1
     },
     discountPercentage: {
         type: Number,
@@ -54,6 +57,9 @@ const productSchema = new mongoose.Schema({
     ],
     brand: {
         type: String,
+    },
+    badge: {
+        type: String
     },
     weight: {
         type: Number,
