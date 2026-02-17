@@ -79,9 +79,9 @@ const createProduct = async (req, res) => {
 }
 
 // =============== Get Product ==================
-const getAll = async () => {
+const getAll = async (req, res) => {
     try {
-        const products = productSchema.find({})
+        const products = await productSchema.find({})
 
         // ---------- Success 
         resHandler.success(res, 201, "Product created successfully", products)
