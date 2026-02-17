@@ -81,7 +81,10 @@ const createProduct = async (req, res) => {
 // =============== Get Product ==================
 const getAll = async () => {
     try {
+        const products = productSchema.find({})
 
+        // ---------- Success 
+        resHandler.success(res, 201, "Product created successfully", products)
     } catch (error) {
         resHandler.error(res, 500, 'Internal Server Error')
     }
