@@ -91,7 +91,7 @@ const getAll = async (req, res) => {
         const productsCount = await productSchema.countDocuments()   
 
         const products = await productSchema.find({})
-
+ 
         // ---------- Success 
         resHandler.success(res, 201, "Product created successfully", products)
     } catch (error) {
