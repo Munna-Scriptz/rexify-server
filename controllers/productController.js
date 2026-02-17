@@ -81,6 +81,14 @@ const createProduct = async (req, res) => {
 // =============== Get Product ==================
 const getAll = async (req, res) => {
     try {
+        // --------- query
+        const category = req.query.category
+        const limit = req.query.limit
+        const page = req.query.page
+        const skip = req.query.skip
+
+        console.log(category)
+        
         const products = await productSchema.find({})
 
         // ---------- Success 
