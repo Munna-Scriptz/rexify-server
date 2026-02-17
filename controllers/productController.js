@@ -88,7 +88,7 @@ const getAll = async (req, res) => {
         const skip = (page - 1) * limit
 
         // --------- Count
-        const productsCount = await productSchema.countDocuments()
+        const productsCount = await productSchema.countDocuments()   
 
         const products = await productSchema.find({})
 
