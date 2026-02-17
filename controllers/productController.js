@@ -87,7 +87,8 @@ const getAll = async (req, res) => {
         const page = parseInt(req.query.page) || 1
         const skip = (page - 1) * limit
 
-        console.log(category)
+        // --------- Count
+        const productsCount = await productSchema.countDocuments()
 
         const products = await productSchema.find({})
 
