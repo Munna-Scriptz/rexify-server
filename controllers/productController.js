@@ -83,12 +83,12 @@ const getAll = async (req, res) => {
     try {
         // --------- query
         const category = req.query.category
-        const limit = req.query.limit
-        const page = req.query.page
-        const skip = req.query.skip
+        const limit = parseInt(req.query.limit) || 10
+        const page = parseInt(req.query.page) || 1
+        const skip = (page - 1) * limit
 
         console.log(category)
-        
+
         const products = await productSchema.find({})
 
         // ---------- Success 
