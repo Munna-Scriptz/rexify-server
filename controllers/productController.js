@@ -3,6 +3,7 @@ const productSchema = require("../models/productSchema")
 const { cloudUpload } = require("../services/cloudUpload")
 const resHandler = require("../utils/resHandler")
 
+// =============== Create Product ==================
 const createProduct = async (req, res) => {
     try {
         const { title, slug, description, category, price, discountPercentage, variants, brand, badge, weight, warranty, shipping, power, tags, isActive } = req.body
@@ -77,5 +78,15 @@ const createProduct = async (req, res) => {
     }
 }
 
+// =============== Get Product ==================
+const getAll = async () => {
+    try {
 
-module.exports = { createProduct }
+    } catch (error) {
+        resHandler.error(res, 500, 'Internal Server Error')
+    }
+}
+
+
+
+module.exports = { createProduct, getAll }
