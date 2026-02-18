@@ -106,7 +106,7 @@ const getAll = async (req, res) => {
             { $sort: { createdAt: -1 } },
             { $skip: skip },
             { $limit: limit },
-            { $project: { __v: 0, isActive: 0, updatedAt: 0,  "category.__v": 0, "category.isActive": 0, "category._id": 0, "variants._id": 0 } }
+            { $project: { __v: 0, isActive: 0, updatedAt: 0, "category.__v": 0, "category.isActive": 0, "category._id": 0, "variants._id": 0 } }
         ]
         // ---------- Find product 
         const products = await productSchema.aggregate(pipline)
@@ -144,6 +144,19 @@ const getSingle = async (req, res) => {
     }
 }
 
+// =============== Update Product ==================
+const updateProduct = async (req, res) => {
+    try {
+        const { slug } = req.params
+
+        // --------- Success 
+        resHandler.success(res, 200, "Product updated successfully")
+    } catch (error) {
+        console.log(error)
+        resHandler.error(res, 500, 'Internal Server Error')
+    }
+}
 
 
-module.exports = { createProduct, getAll, getSingle }
+
+module.exports = { createProduct, getAll, getSingle, updateProduct }
