@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema({
-    name: {
+    slug: {
         type: String,
         required: true,
         unique: true,
+    },
+    name: {
+        type: String,
+        required: true,
         trim: true
     },
     description: {

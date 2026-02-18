@@ -109,7 +109,7 @@ const getAll = async (req, res) => {
         if (categoryName) {
             pipline.push({
                 $match: {
-                    "category.name": categoryName
+                    "category.slug": categoryName
                 }
             })
         }
