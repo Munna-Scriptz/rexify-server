@@ -101,18 +101,13 @@ const getAll = async (req, res) => {
                     as: "category"
                 }
             },
-            { $match: { "isActive": true } },
+            { $match: { "isActive": true, ...(categorySlug && { "category.slug": categorySlug }) } },
             { $unwind: "$category" },
             { $sort: { createdAt: -1 } },
             { $skip: skip },
             { $limit: limit },
+            { $project: { __v: 0, isActive: 0, updatedAt: 0,  "category.__v": 0, "category.isActive": 0, "category._id": 0, "variants._id": 0 } }
         ]
-
-        // ------- if category provided 
-        if (categorySlug) {
-            pipline.push({ $match: { "category.slug": categorySlug } })
-        }
-
         // ---------- Find product 
         const products = await productSchema.aggregate(pipline)
 
@@ -133,6 +128,22 @@ const getAll = async (req, res) => {
     }
 }
 
+// =============== Get Single Product ==================
+const getSingle = async (req, res) => {
+    try {
+        const { slug } = req.params
+
+        // ------- Find from DB
+        const product = await productSchema.findOne({ slug }).select("-__v -isActive -updatedAt ")
+        if (!product) return resHandler.error(res, 404, "Coudn't found any product")
+
+        // --------- Success 
+        resHandler.success(res, 200, "", product)
+    } catch (error) {
+        resHandler.error(res, 500, 'Internal Server Error')
+    }
+}
 
 
-module.exports = { createProduct, getAll }
+
+module.exports = { createProduct, getAll, getSingle }
