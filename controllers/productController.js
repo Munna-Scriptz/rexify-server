@@ -149,8 +149,12 @@ const updateProduct = async (req, res) => {
     try {
         const { slug } = req.params
 
+        // ------- Find from DB
+        const product = await productSchema.findOne({ slug }).select("-__v -isActive -updatedAt ")
+        if (!product) return resHandler.error(res, 404, "Coudn't found any product")
+
         // --------- Success 
-        resHandler.success(res, 200, "Product updated successfully")
+        resHandler.success(res, 200, "Product updated successfully", product)
     } catch (error) {
         console.log(error)
         resHandler.error(res, 500, 'Internal Server Error')
