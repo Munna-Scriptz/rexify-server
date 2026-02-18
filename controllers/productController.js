@@ -82,18 +82,51 @@ const createProduct = async (req, res) => {
 const getAll = async (req, res) => {
     try {
         // --------- query
-        const category = req.query.category
+        const categoryName = req.query.category
         const limit = parseInt(req.query.limit) || 10
         const page = parseInt(req.query.page) || 1
         const skip = (page - 1) * limit
 
-        // --------- Count
-        const productsCount = await productSchema.countDocuments()   
+        // --------- Count & Page
+        const productsCount = await productSchema.countDocuments()
+        const totalPages = Math.ceil(productsCount / limit)
 
-        const products = await productSchema.find({})
- 
+        // --------- Search and Pipeline
+        const pipline = [
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "category",
+                    foreignField: "_id",
+                    as: "category"
+                }
+            },
+            { $unwind: "$category" },
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+        ]
+        if (categoryName) {
+            pipline.push({
+                $match: {
+                    "category.name": categoryName
+                }
+            })
+        }
+
+        const products = await productSchema.aggregate(pipline)
+
         // ---------- Success 
-        resHandler.success(res, 201, "Product created successfully", products)
+        resHandler.success(res, 201, "Product created successfully", {
+            products,
+            pagination: {
+                total: productsCount,
+                page,
+                limit,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1
+            }
+        })
     } catch (error) {
         resHandler.error(res, 500, 'Internal Server Error')
     }
