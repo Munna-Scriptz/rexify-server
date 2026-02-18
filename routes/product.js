@@ -8,7 +8,7 @@ const upload = multer()
 
 
 router.post('/create', authMiddleware, roleCheckMiddleware("admin", "editor"), upload.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'images', maxCount: 4 }]), createProduct)
-router.get("/all", getAll)
+router.get("/", getAll)
 
 
 module.exports = router

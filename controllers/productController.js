@@ -78,11 +78,11 @@ const createProduct = async (req, res) => {
     }
 }
 
-// =============== Get Product ==================
+// =============== Get all Product ==================
 const getAll = async (req, res) => {
     try {
         // --------- query
-        const categoryName = req.query.category
+        const categorySlug = req.query.category
         const limit = parseInt(req.query.limit) || 10
         const page = parseInt(req.query.page) || 1
         const skip = (page - 1) * limit
@@ -101,26 +101,27 @@ const getAll = async (req, res) => {
                     as: "category"
                 }
             },
+            { $match: { "isActive": true } },
             { $unwind: "$category" },
             { $sort: { createdAt: -1 } },
             { $skip: skip },
             { $limit: limit },
         ]
-        if (categoryName) {
-            pipline.push({
-                $match: {
-                    "category.slug": categoryName
-                }
-            })
+
+        // ------- if category provided 
+        if (categorySlug) {
+            pipline.push({ $match: { "category.slug": categorySlug } })
         }
 
+        // ---------- Find product 
         const products = await productSchema.aggregate(pipline)
 
         // ---------- Success 
-        resHandler.success(res, 201, "Product created successfully", {
+        resHandler.success(res, 201, "", {
             products,
             pagination: {
                 total: productsCount,
+                showing: products?.length || 0,
                 page,
                 limit,
                 hasNextPage: page < totalPages,
