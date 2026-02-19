@@ -147,11 +147,16 @@ const getSingle = async (req, res) => {
 // =============== Update Product ==================
 const updateProduct = async (req, res) => {
     try {
-        const { slug } = req.params
+        const productSlug = req.params.slug
+        const { title, slug, description, category, price, discountPercentage, variants, brand, badge, weight, warranty, shipping, power, tags, isActive } = req.body
 
         // ------- Find from DB
-        const product = await productSchema.findOne({ slug }).select("-__v -isActive -updatedAt ")
+        const product = await productSchema.findOne({ slug: productSlug }).select("-__v -isActive -updatedAt ")
         if (!product) return resHandler.error(res, 404, "Coudn't found any product")
+
+
+
+
 
         // --------- Success 
         resHandler.success(res, 200, "Product updated successfully", product)
