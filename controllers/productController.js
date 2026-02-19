@@ -150,16 +150,42 @@ const updateProduct = async (req, res) => {
         const productSlug = req.params.slug
         const { title, slug, description, category, price, discountPercentage, variants, brand, badge, weight, warranty, shipping, power, tags, isActive } = req.body
 
+        // ---------- Validation ----------
+        const existSlug = await productSchema.findOne({ slug: slug?.toLowerCase() })
+        if (existSlug) return resHandler.error(res, 400, 'Slug with this name already exists')
+        if (variants) {
+            for (const variant of variants) {
+                if (variant.stock < 1) return resHandler.error(res, 400, 'Stock must be at least 1')
+            }
+        }
+        if (category) {
+            const existCategory = await categorySchema.findById(category)
+            if (!existCategory) return resHandler.error(res, 400, "Invalid category or doesn't exist")
+        }
+
         // ------- Find from DB
-        const product = await productSchema.findOne({ slug: productSlug }).select("-__v -isActive -updatedAt ")
-        if (!product) return resHandler.error(res, 404, "Coudn't found any product")
+        const existingProduct = await productSchema.findOneAndUpdate(
+            { slug: productSlug },
+            { $set: req.body },
+            { new: true }
+        )
+
+        if (!existingProduct) return resHandler.error(res, 404, "Coudn't found any product")
 
 
-
+        // ------------ Images -------------
+        // if (avatar) {
+        //     const userAvatarId = existingUser.avatar.split("/").pop().split(".").shift()
+        //     // --- Delete previous avatar
+        //     cloudDelete(`avatar/${userAvatarId}`)
+        //     const cloudRes = await cloudUpload({ file: avatar, folderPath: "rexify/user", folder: "avatar" })
+        //     existingUser.avatar = cloudRes.secure_url
+        // }
+        existingProduct.save()
 
 
         // --------- Success 
-        resHandler.success(res, 200, "Product updated successfully", product)
+        resHandler.success(res, 200, "Product updated successfully", existingProduct)
     } catch (error) {
         console.log(error)
         resHandler.error(res, 500, 'Internal Server Error')
