@@ -181,7 +181,7 @@ const updateProduct = async (req, res) => {
         if (warranty) existingProduct.warranty = warranty
         if (shipping) existingProduct.shipping = shipping
         if (power) existingProduct.power = power
-        if (tags) existingProduct.tags = tags
+        if (tags) existingProduct.tags = tags 
 
 
         // ------------ Images -------------
