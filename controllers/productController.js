@@ -185,12 +185,12 @@ const updateProduct = async (req, res) => {
 
 
         // ------------ Images -------------
-        if (avatar) {
-            const userAvatarId = existingUser.avatar.split("/").pop().split(".").shift()
+        if (thumbnail) {
+            const productThumb = existingProduct.thumbnail.split("/").pop().split(".").shift()
             // --- Delete previous avatar
-            cloudDelete(`avatar/${userAvatarId}`)
-            const cloudRes = await cloudUpload({ file: avatar, folderPath: "rexify/user", folder: "avatar" })
-            existingUser.avatar = cloudRes.secure_url
+            cloudDelete(`avatar/${productThumb}`)
+            const cloudRes = await cloudUpload({ file: thumbnail, folderPath: "rexify/products", folder: "product" })
+            existingProduct.thumbnail = cloudRes.secure_url
         }
         existingProduct.save()
 
