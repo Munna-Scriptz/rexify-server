@@ -148,6 +148,7 @@ const getSingle = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const productSlug = req.params.slug
+        const thumbnail = req.file
         const { title, slug, description, category, price, discountPercentage, variants, brand, badge, weight, warranty, shipping, power, tags, isActive } = req.body
 
         // ---------- Validation ----------
@@ -164,23 +165,33 @@ const updateProduct = async (req, res) => {
         }
 
         // ------- Find from DB
-        const existingProduct = await productSchema.findOneAndUpdate(
-            { slug: productSlug },
-            { $set: req.body },
-            { new: true }
-        )
-
+        const existingProduct = await productSchema.findOne({ slug: productSlug })
         if (!existingProduct) return resHandler.error(res, 404, "Coudn't found any product")
+
+        if (title) existingProduct.title = title
+        if (slug) existingProduct.slug = slug.toLowerCase()
+        if (description) existingProduct.description = description
+        if (category) existingProduct.category = category
+        if (price) existingProduct.price = price
+        if (discountPercentage) existingProduct.discountPercentage = discountPercentage
+        if (variants) existingProduct.variants = variants
+        if (brand) existingProduct.brand = brand
+        if (badge) existingProduct.badge = badge
+        if (weight) existingProduct.weight = weight
+        if (warranty) existingProduct.warranty = warranty
+        if (shipping) existingProduct.shipping = shipping
+        if (power) existingProduct.power = power
+        if (tags) existingProduct.tags = tags
 
 
         // ------------ Images -------------
-        // if (avatar) {
-        //     const userAvatarId = existingUser.avatar.split("/").pop().split(".").shift()
-        //     // --- Delete previous avatar
-        //     cloudDelete(`avatar/${userAvatarId}`)
-        //     const cloudRes = await cloudUpload({ file: avatar, folderPath: "rexify/user", folder: "avatar" })
-        //     existingUser.avatar = cloudRes.secure_url
-        // }
+        if (avatar) {
+            const userAvatarId = existingUser.avatar.split("/").pop().split(".").shift()
+            // --- Delete previous avatar
+            cloudDelete(`avatar/${userAvatarId}`)
+            const cloudRes = await cloudUpload({ file: avatar, folderPath: "rexify/user", folder: "avatar" })
+            existingUser.avatar = cloudRes.secure_url
+        }
         existingProduct.save()
 
 
