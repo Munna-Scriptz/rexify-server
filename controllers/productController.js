@@ -196,9 +196,8 @@ const updateProduct = async (req, res) => {
 
 
         // --------- Success 
-        resHandler.success(res, 200, "Product updated successfully", existingProduct)
+        resHandler.success(res, 200, "Product updated successfully")
     } catch (error) {
-        console.log(error)
         resHandler.error(res, 500, 'Internal Server Error')
     }
 }
