@@ -187,8 +187,8 @@ const updateProduct = async (req, res) => {
         // ------------ Images -------------
         if (thumbnail) {
             const productThumb = existingProduct.thumbnail.split("/").pop().split(".").shift()
-            // --- Delete previous avatar
-            cloudDelete(`avatar/${productThumb}`)
+            // --- Delete previous thumbnail
+            cloudDelete(`thumbnail/${productThumb}`)
             const cloudRes = await cloudUpload({ file: thumbnail, folderPath: "rexify/products", folder: "product" })
             existingProduct.thumbnail = cloudRes.secure_url
         }
