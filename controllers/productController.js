@@ -174,17 +174,19 @@ const updateProduct = async (req, res) => {
             for (const variant of variants) {
                 if (variant.stock && variant.stock < 1) return resHandler.error(res, 400, 'Stock must be at least 1')
             }
+            const AllSku = variants.map(item => item.sku)
+            if (new Set(AllSku).size !== AllSku.length) return resHandler.error(res, 400, 'SKU with this name already exists')
         }
         if (category) {
             const existCategory = await categorySchema.findById(category)
             if (!existCategory) return resHandler.error(res, 400, "Invalid category or doesn't exist")
         }
-        if (isActive && Array.isArray(isActive)) return resHandler.error(res, 400, "IsActive must be in true or false only")
+        if (tags && tags?.length > 0 && !Array.isArray(tags)) return resHandler.error(res, 400, "Tags must be in array or syntax error")
 
         // ------- Find from DB
         const existingProduct = await productSchema.findOne({ slug: productSlug })
         if (!existingProduct) return resHandler.error(res, 404, "Coudn't found any product")
-            
+
         // ------- Changes
         if (title) existingProduct.title = title
         if (slug) existingProduct.slug = slug.toLowerCase()
