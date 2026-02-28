@@ -21,11 +21,6 @@ const productSchema = new mongoose.Schema({
         ref: 'category',
         required: true,
     },
-    price: {
-        type: Number,
-        required: true,
-        min: 1
-    },
     discountPercentage: {
         type: Number,
         default: 0,
@@ -48,6 +43,11 @@ const productSchema = new mongoose.Schema({
             ram: {
                 type: String,
             },
+            price: {
+                type: Number,
+                required: true,
+                min: 1
+            },
             stock: {
                 type: Number,
                 required: true,
@@ -55,14 +55,28 @@ const productSchema = new mongoose.Schema({
             }
         }
     ],
+    specifications: {
+        display: {
+            size: String,
+            type: String,
+            resolution: String,
+            refreshRate: String
+        },
+        camera: {
+            rear: String,
+            front: String
+        },
+        battery: String,
+        processor: String,
+        network: String,
+        weight: String,
+        os: String,
+    },
     brand: {
         type: String,
     },
     badge: {
         type: String
-    },
-    weight: {
-        type: Number,
     },
     warranty: {
         type: String,
@@ -71,9 +85,6 @@ const productSchema = new mongoose.Schema({
     shipping: {
         type: String,
         default: "Ships in 3-5 business days"
-    },
-    power: {
-        type: String,
     },
     tags: [
         {
