@@ -58,24 +58,24 @@ const productSchema = new mongoose.Schema({
     ],
     specifications: {
         display: {
-            size: String,
-            type: String,
-            resolution: String,
-            refreshRate: String
+            size: { type: String, required: true },
+            type: { type: String, required: true },
+            resolution: { type: String, required: true },
+            refreshRate: { type: String, required: true }
         },
         camera: {
-            rear: String,
-            front: String
+            rear: { type: String, required: true },
+            front: { type: String, required: true }
         },
-        battery: String,
-        processor: String,
-        network: String,
-        weight: String,
-        os: String,
-        _id: false
+        battery: { type: String, required: true },
+        processor: { type: String, required: true },
+        network: { type: String, required: true },
+        weight: { type: String, required: true },
+        os: { type: String, required: true },
     },
     brand: {
         type: String,
+        required: true
     },
     badge: {
         type: String
@@ -87,6 +87,10 @@ const productSchema = new mongoose.Schema({
     shipping: {
         type: String,
         default: "Ships in 3-5 business days"
+    },
+    soldCount: {
+        type: Number,
+        default: 0
     },
     tags: [
         {

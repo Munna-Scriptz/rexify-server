@@ -6,7 +6,7 @@ const resHandler = require("../utils/resHandler")
 // =============== Create Product ==================
 const createProduct = async (req, res) => {
     try {
-        const { title, slug, description, category, price, discountPercentage, variants, brand, badge, weight, warranty, shipping, power, tags, isActive } = req.body
+        const { title, slug, description, category, price, discountPercentage, variants, specifications, brand, badge, warranty, shipping, tags, isActive } = req.body
         const thumbnail = req.files?.thumbnail?.[0]
         const images = req.files?.images
 
@@ -21,7 +21,7 @@ const createProduct = async (req, res) => {
         if (!category) return resHandler.error(res, 400, 'Category is required')
         const existCategory = await categorySchema.findById(category)
         if (!existCategory) return resHandler.error(res, 400, "Invalid category or doesn't exist")
-        // if (!price) return resHandler.error(res, 400, 'Price is required')
+
         // Variants 
         if (!Array.isArray(variants) || variants.length == 0) return resHandler.error(res, 400, 'Variants is required')
         for (const variant of variants) {
@@ -32,9 +32,24 @@ const createProduct = async (req, res) => {
             if (!variant.price) return resHandler.error(res, 400, 'Product price is required')
             if (!variant.stock || variant.stock < 1) return resHandler.error(res, 400, 'Stock is required and must be at least 1')
         }
-        // SKU 
         const AllSku = variants.map(item => item.sku)
         if (new Set(AllSku).size !== AllSku.length) return resHandler.error(res, 400, 'SKU with this name already exists')
+
+        // Specifications
+        if(!specifications.display.size) return resHandler.error(res, 400, 'Specification display size required')
+        if(!specifications.display.type) return resHandler.error(res, 400, 'Specification display type required')
+        if(!specifications.display.resolution) return resHandler.error(res, 400, 'Specification display resolution required')
+        if(!specifications.display.refreshRate) return resHandler.error(res, 400, 'Specification display refreshRate required')
+
+        if(!specifications.camera.rear) return resHandler.error(res, 400, 'Specification camera rear required')
+
+        if(!specifications.battery) return resHandler.error(res, 400, 'Specification battery required')
+        if(!specifications.processor) return resHandler.error(res, 400, 'Specification processor required')
+        if(!specifications.network) return resHandler.error(res, 400, 'Specification network required')
+        if(!specifications.weight) return resHandler.error(res, 400, 'Specification weight required')
+        if(!specifications.os) return resHandler.error(res, 400, 'Specification os required')
+
+            console.log(specifications)
 
 
 
@@ -49,6 +64,7 @@ const createProduct = async (req, res) => {
                 imageUrls.push(uploadRes.secure_url)
             }
         }
+
 
         // ---------- Save to DB ----------
         const product = productSchema({
@@ -70,7 +86,7 @@ const createProduct = async (req, res) => {
             tags,
             isActive
         })
-        product.save()
+        // product.save()
 
         // ------------ Success 
         resHandler.success(res, 201, "Product created successfully")
