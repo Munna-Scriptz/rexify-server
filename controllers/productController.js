@@ -36,18 +36,18 @@ const createProduct = async (req, res) => {
         if (new Set(AllSku).size !== AllSku.length) return resHandler.error(res, 400, 'SKU with this name already exists')
 
         // Specifications
-        if(!specifications.display.size) return resHandler.error(res, 400, 'Specification display size required')
-        if(!specifications.display.type) return resHandler.error(res, 400, 'Specification display type required')
-        if(!specifications.display.resolution) return resHandler.error(res, 400, 'Specification display resolution required')
-        if(!specifications.display.refreshRate) return resHandler.error(res, 400, 'Specification display refreshRate required')
+        if (!specifications.display.size) return resHandler.error(res, 400, 'Specification display size required')
+        if (!specifications.display.type) return resHandler.error(res, 400, 'Specification display type required')
+        if (!specifications.display.resolution) return resHandler.error(res, 400, 'Specification display resolution required')
+        if (!specifications.display.refreshRate) return resHandler.error(res, 400, 'Specification display refreshRate required')
 
-        if(!specifications.camera.rear) return resHandler.error(res, 400, 'Specification camera rear required')
+        if (!specifications.camera.rear) return resHandler.error(res, 400, 'Specification camera rear required')
 
-        if(!specifications.battery) return resHandler.error(res, 400, 'Specification battery required')
-        if(!specifications.processor) return resHandler.error(res, 400, 'Specification processor required')
-        if(!specifications.network) return resHandler.error(res, 400, 'Specification network required')
-        if(!specifications.weight) return resHandler.error(res, 400, 'Specification weight required')
-        if(!specifications.os) return resHandler.error(res, 400, 'Specification os required')
+        if (!specifications.battery) return resHandler.error(res, 400, 'Specification battery required')
+        if (!specifications.processor) return resHandler.error(res, 400, 'Specification processor required')
+        if (!specifications.network) return resHandler.error(res, 400, 'Specification network required')
+        if (!specifications.weight) return resHandler.error(res, 400, 'Specification weight required')
+        if (!specifications.os) return resHandler.error(res, 400, 'Specification os required')
 
 
         // ---------- Upload images ----------
@@ -163,38 +163,40 @@ const updateProduct = async (req, res) => {
     try {
         const productSlug = req.params.slug
         const thumbnail = req.file
-        const { title, slug, description, category, price, discountPercentage, variants, brand, badge, weight, warranty, shipping, power, tags, isActive } = req.body
+        const { title, slug, description, category, discountPercentage, variants, specifications, brand, badge, warranty, shipping, tags, isActive } = req.body
 
         // ---------- Validation ----------
-        const existSlug = await productSchema.findOne({ slug: slug?.toLowerCase() })
-        if (existSlug) return resHandler.error(res, 400, 'Slug with this name already exists')
+        if (slug) {
+            const existSlug = await productSchema.findOne({ slug: slug?.toLowerCase() })
+            if (existSlug) return resHandler.error(res, 400, 'Slug with this name already exists')
+        }
         if (variants) {
             for (const variant of variants) {
-                if (variant.stock < 1) return resHandler.error(res, 400, 'Stock must be at least 1')
+                if (variant.stock && variant.stock < 1) return resHandler.error(res, 400, 'Stock must be at least 1')
             }
         }
         if (category) {
             const existCategory = await categorySchema.findById(category)
             if (!existCategory) return resHandler.error(res, 400, "Invalid category or doesn't exist")
         }
+        if (isActive && Array.isArray(isActive)) return resHandler.error(res, 400, "IsActive must be in true or false only")
 
         // ------- Find from DB
         const existingProduct = await productSchema.findOne({ slug: productSlug })
         if (!existingProduct) return resHandler.error(res, 404, "Coudn't found any product")
-
+            
+        // ------- Changes
         if (title) existingProduct.title = title
         if (slug) existingProduct.slug = slug.toLowerCase()
         if (description) existingProduct.description = description
         if (category) existingProduct.category = category
-        if (price) existingProduct.price = price
         if (discountPercentage) existingProduct.discountPercentage = discountPercentage
         if (variants) existingProduct.variants = variants
+        if (specifications) existingProduct.specifications = specifications
         if (brand) existingProduct.brand = brand
         if (badge) existingProduct.badge = badge
-        if (weight) existingProduct.weight = weight
         if (warranty) existingProduct.warranty = warranty
         if (shipping) existingProduct.shipping = shipping
-        if (power) existingProduct.power = power
         if (tags) existingProduct.tags = tags
 
 
