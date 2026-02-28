@@ -21,7 +21,7 @@ const createProduct = async (req, res) => {
         if (!category) return resHandler.error(res, 400, 'Category is required')
         const existCategory = await categorySchema.findById(category)
         if (!existCategory) return resHandler.error(res, 400, "Invalid category or doesn't exist")
-        if (!price) return resHandler.error(res, 400, 'Price is required')
+        // if (!price) return resHandler.error(res, 400, 'Price is required')
         // Variants 
         if (!Array.isArray(variants) || variants.length == 0) return resHandler.error(res, 400, 'Variants is required')
         for (const variant of variants) {
@@ -38,8 +38,8 @@ const createProduct = async (req, res) => {
 
 
         // ---------- Upload images ----------
-        if (!thumbnail) return resHandler.error(res, 400, 'Product thumbnail is required')
-        const thumbRes = await cloudUpload({ file: thumbnail, folderPath: "rexify/products", folder: "product" })
+        // if (!thumbnail) return resHandler.error(res, 400, 'Product thumbnail is required')
+        // const thumbRes = await cloudUpload({ file: thumbnail, folderPath: "rexify/products", folder: "product" })
 
         const imageUrls = []
         if (images) {
@@ -59,7 +59,7 @@ const createProduct = async (req, res) => {
             discountPercentage,
             variants,
             images: imageUrls,
-            thumbnail: thumbRes.secure_url,
+            // thumbnail: thumbRes.secure_url,
             brand,
             badge,
             weight,
@@ -181,7 +181,7 @@ const updateProduct = async (req, res) => {
         if (warranty) existingProduct.warranty = warranty
         if (shipping) existingProduct.shipping = shipping
         if (power) existingProduct.power = power
-        if (tags) existingProduct.tags = tags 
+        if (tags) existingProduct.tags = tags
 
 
         // ------------ Images -------------

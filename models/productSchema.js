@@ -38,10 +38,10 @@ const productSchema = new mongoose.Schema({
                 required: true
             },
             storage: {
-                type: String,
+                type: Number,
             },
             ram: {
-                type: String,
+                type: Number,
             },
             price: {
                 type: Number,
@@ -93,7 +93,7 @@ const productSchema = new mongoose.Schema({
     ],
     thumbnail: {
         type: String,
-        required: true,
+        // required: true,
     },
     images: [
         {
