@@ -29,6 +29,7 @@ const createProduct = async (req, res) => {
             if (!variant.color) return resHandler.error(res, 400, 'Product color is required')
             if (!variant.ram) return resHandler.error(res, 400, 'Product RAM is required')
             if (!variant.storage) return resHandler.error(res, 400, 'Product Storage is required')
+            if (!variant.price) return resHandler.error(res, 400, 'Product price is required')
             if (!variant.stock || variant.stock < 1) return resHandler.error(res, 400, 'Stock is required and must be at least 1')
         }
         // SKU 

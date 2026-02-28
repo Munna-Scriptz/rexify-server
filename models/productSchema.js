@@ -52,7 +52,8 @@ const productSchema = new mongoose.Schema({
                 type: Number,
                 required: true,
                 min: 0
-            }
+            },
+            _id: false
         }
     ],
     specifications: {
@@ -71,6 +72,7 @@ const productSchema = new mongoose.Schema({
         network: String,
         weight: String,
         os: String,
+        _id: false
     },
     brand: {
         type: String,
