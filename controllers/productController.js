@@ -49,9 +49,6 @@ const createProduct = async (req, res) => {
         if(!specifications.weight) return resHandler.error(res, 400, 'Specification weight required')
         if(!specifications.os) return resHandler.error(res, 400, 'Specification os required')
 
-            console.log(specifications)
-
-
 
         // ---------- Upload images ----------
         // if (!thumbnail) return resHandler.error(res, 400, 'Product thumbnail is required')
@@ -75,22 +72,22 @@ const createProduct = async (req, res) => {
             price,
             discountPercentage,
             variants,
+            specifications,
             images: imageUrls,
             // thumbnail: thumbRes.secure_url,
             brand,
             badge,
-            weight,
             warranty,
             shipping,
-            power,
             tags,
             isActive
         })
-        // product.save()
+        product.save()
 
         // ------------ Success 
         resHandler.success(res, 201, "Product created successfully")
     } catch (error) {
+        console.log(error)
         resHandler.error(res, 500, 'Internal Server Error')
     }
 }
