@@ -211,28 +211,43 @@ const updateProduct = async (req, res) => {
         }
 
         // ------------ Images -------------
-        const updatedImageUrls = []
+        let updatedImageUrls = []
 
-        if (destroyImg) {
-            for (const imgs of destroyImg) {
-                cloudDelete({ folder: "product", file: imgs }) // --- Delete previous images
+        let totalImages = existingProduct.images.length
+        if (destroyImg.length > 0) totalImages -= destroyImg.length
+        if (Array.isArray(images) && images?.length > 0) totalImages += images.length
+        if(updatedImageUrls.length > 4) return resHandler.error(res, 400, "you can upload 4 images maximum")
+        if(totalImages.length < 1) return resHandler.error(res, 400, "minimum image upload is 1")
+
+
+
+            if (Array.isArray(destroyImg) && destroyImg.length > 0) {
+                for (const imgs of destroyImg) {
+                    cloudDelete({ folder: "product", file: imgs }) // --- Delete previous images
+                }
             }
-        }
 
-        if (images) {
+        if (images && images.length > 0) {
             for (const img of images) {
                 const uploadRes = await cloudUpload({ file: img, folderPath: "rexify/products", folder: "product" })
                 updatedImageUrls.push(uploadRes.secure_url)
             }
+
         }
 
-        
+        const filteredImg = existingProduct.images.filter((item) => {
+            return !destroyImg.includes(item)
+        })
+
+        updatedImageUrls = updatedImageUrls.concat(filteredImg)
 
         console.log(updatedImageUrls)
 
+        existingProduct.images = updatedImageUrls
 
+
+        // ---- Save
         existingProduct.save()
-
 
         // --------- Success 
         resHandler.success(res, 200, "Product updated successfully")
