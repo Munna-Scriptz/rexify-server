@@ -1,6 +1,6 @@
 const categorySchema = require("../models/categorySchema")
 const productSchema = require("../models/productSchema")
-const { cloudUpload } = require("../services/cloudUpload")
+const { cloudUpload, cloudDelete } = require("../services/cloudUpload")
 const resHandler = require("../utils/resHandler")
 
 // =============== Create Product ==================
@@ -217,10 +217,12 @@ const updateProduct = async (req, res) => {
                 cloudDelete({ folder: "product", file: imgs }) // --- Delete previous images
             }
         }
-
-        for (const img of images) {
-            const uploadRes = await cloudUpload({ file: img, folderPath: "rexify/products", folder: "product" })
-            imageUrls.push(uploadRes.secure_url)
+        console.log(images)
+        if (images) {
+            for (const img of images) {
+                const uploadRes = await cloudUpload({ file: img, folderPath: "rexify/products", folder: "product" })
+                updatedImageUrls.push(uploadRes.secure_url)
+            }
         }
 
 
@@ -232,6 +234,7 @@ const updateProduct = async (req, res) => {
         // --------- Success 
         resHandler.success(res, 200, "Product updated successfully")
     } catch (error) {
+        console.log(error)
         resHandler.error(res, 500, 'Internal Server Error')
     }
 }
