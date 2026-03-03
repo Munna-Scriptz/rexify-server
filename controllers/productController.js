@@ -162,8 +162,8 @@ const getSingle = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const productSlug = req.params.slug
-        const thumbnail = req.file
-        const images = req.files
+        const thumbnail = req.files?.thumbnail?.[0]
+        const images = req.files?.images
         const { title, slug, description, category, discountPercentage, variants, specifications, brand, badge, warranty, shipping, tags, isActive, destroyImg = [] } = req.body
 
         // ---------- Validation ----------
@@ -212,12 +212,13 @@ const updateProduct = async (req, res) => {
 
         // ------------ Images -------------
         const updatedImageUrls = []
+
         if (destroyImg) {
             for (const imgs of destroyImg) {
                 cloudDelete({ folder: "product", file: imgs }) // --- Delete previous images
             }
         }
-        console.log(images)
+
         if (images) {
             for (const img of images) {
                 const uploadRes = await cloudUpload({ file: img, folderPath: "rexify/products", folder: "product" })
@@ -225,7 +226,9 @@ const updateProduct = async (req, res) => {
             }
         }
 
+        
 
+        console.log(updatedImageUrls)
 
 
         existingProduct.save()
