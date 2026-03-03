@@ -163,7 +163,8 @@ const updateProduct = async (req, res) => {
     try {
         const productSlug = req.params.slug
         const thumbnail = req.file
-        const { title, slug, description, category, discountPercentage, variants, specifications, brand, badge, warranty, shipping, tags, isActive, destroyImg } = req.body
+        const images = req.files
+        const { title, slug, description, category, discountPercentage, variants, specifications, brand, badge, warranty, shipping, tags, isActive, destroyImg = [] } = req.body
 
         // ---------- Validation ----------
         if (slug) {
@@ -204,15 +205,22 @@ const updateProduct = async (req, res) => {
 
         // ------------ Thumbnail -------------
         if (thumbnail) {
-            // --- Delete previous thumbnail
-            cloudDelete({ folder: "thumbnail", file: existingProduct.thumbnail })
+            cloudDelete({ folder: "thumbnail", file: existingProduct.thumbnail }) // --- Delete previous thumbnail
             const cloudRes = await cloudUpload({ file: thumbnail, folderPath: "rexify/products", folder: "product" })
             existingProduct.thumbnail = cloudRes.secure_url
         }
 
         // ------------ Images -------------
+        const updatedImageUrls = []
         if (destroyImg) {
-            console.log(destroyImg)
+            for (const imgs of destroyImg) {
+                cloudDelete({ folder: "product", file: imgs }) // --- Delete previous images
+            }
+        }
+
+        for (const img of images) {
+            const uploadRes = await cloudUpload({ file: img, folderPath: "rexify/products", folder: "product" })
+            imageUrls.push(uploadRes.secure_url)
         }
 
 
