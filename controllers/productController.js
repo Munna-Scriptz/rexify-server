@@ -216,15 +216,15 @@ const updateProduct = async (req, res) => {
         let totalImages = existingProduct.images.length
         if (destroyImg.length > 0) totalImages -= destroyImg.length
         if (Array.isArray(images) && images?.length > 0) totalImages += images.length
-        if(totalImages > 4) return resHandler.error(res, 400, "you can upload 4 images maximum")
-        if(totalImages < 0) return resHandler.error(res, 400, "minimum image upload is 1")
+        if (totalImages > 4) return resHandler.error(res, 400, "You can upload maximum of 4 images")
+        if (totalImages < 0) return resHandler.error(res, 400, "Please upload at least 1 image")
 
 
-            if (Array.isArray(destroyImg) && destroyImg.length > 0) {
-                for (const imgs of destroyImg) {
-                    cloudDelete({ folder: "product", file: imgs }) // --- Delete previous images
-                }
+        if (Array.isArray(destroyImg) && destroyImg.length > 0) {
+            for (const imgs of destroyImg) {
+                cloudDelete({ folder: "product", file: imgs }) // --- Delete previous images
             }
+        }
 
         if (images && images.length > 0) {
             for (const img of images) {
