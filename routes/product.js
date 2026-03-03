@@ -9,6 +9,7 @@ const upload = multer()
 
 router.post('/create', authMiddleware, roleCheckMiddleware("admin", "editor"), upload.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'images', maxCount: 4 }]), createProduct)
 router.put('/update/:slug', authMiddleware, roleCheckMiddleware("admin", "editor"), upload.single("thumbnail"), updateProduct)
+
 router.get("/", getAll)
 router.get("/:slug", getSingle)
 

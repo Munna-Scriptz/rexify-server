@@ -221,9 +221,8 @@ const updateProfile = async (req, res) => {
         const existingUser = await userSchema.findById(_id)
 
         if (avatar) {
-            const userAvatarId = existingUser.avatar.split("/").pop().split(".").shift()
             // --- Delete previous avatar
-            cloudDelete(`avatar/${userAvatarId}`)
+            cloudDelete({ folder: "avatar", file: existingUser.avatar })
             const cloudRes = await cloudUpload({ file: avatar, folderPath: "rexify/user", folder: "avatar" })
             existingUser.avatar = cloudRes.secure_url
         }
@@ -246,7 +245,7 @@ const refreshAccToken = (req, res) => {
         const refreshToken = req.cookies?.["X-RF-TOKEN"]
 
         // ----- Validation 
-        if(!refreshToken) return res.status(400).send({ message: "Something went wrong. Please login" })
+        if (!refreshToken) return res.status(400).send({ message: "Something went wrong. Please login" })
 
         // -------- verify, generate and set it to cookies 
         const decoded = verifyToken(refreshToken)

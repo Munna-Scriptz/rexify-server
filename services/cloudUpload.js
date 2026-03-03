@@ -12,12 +12,9 @@ const cloudUpload = async ({ file, folderPath, folder }) => {
 }
 
 // =================== Delete image 
-const cloudDelete = async (publicId) => {
-    try {
-        await cloudinary.uploader.destroy(publicId)
-    } catch (error) {
-        console.log(error)
-    }
+const cloudDelete = async ({ folder, file }) => {
+    const publicId = file.split("/").pop().split(".").shift()
+    await cloudinary.uploader.destroy(`${folder}/${publicId}`)
 }
 
 module.exports = { cloudUpload, cloudDelete }
