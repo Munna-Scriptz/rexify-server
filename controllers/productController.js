@@ -155,6 +155,8 @@ const getSingle = async (req, res) => {
         // ------- Reviews from db
         const allReview = await reviewSchema
             .find({ product: product._id })
+            .populate("user", "fullname")
+            .select("-__v -product -updatedAt ")
 
         console.log(allReview)
         // --------- Success 

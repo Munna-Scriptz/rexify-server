@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     },
     fullname: {
         type: String,
+        default: "rexify user"
     },
     email: {
         type: String,
