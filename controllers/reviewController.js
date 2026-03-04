@@ -78,4 +78,4 @@ const deleteReview = async (req, res) => {
 }
 
 
-module.exports = { createReview, editReview, deleteRevie }
+module.exports = { createReview, editReview, deleteReview }

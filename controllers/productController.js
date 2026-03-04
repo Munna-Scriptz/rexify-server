@@ -1,5 +1,6 @@
 const categorySchema = require("../models/categorySchema")
 const productSchema = require("../models/productSchema")
+const reviewSchema = require("../models/reviewSchema")
 const { cloudUpload, cloudDelete } = require("../services/cloudUpload")
 const resHandler = require("../utils/resHandler")
 
@@ -149,8 +150,13 @@ const getSingle = async (req, res) => {
 
         // ------- Find from DB
         const product = await productSchema.findOne({ slug }).select("-__v -isActive -updatedAt ")
-        if (!product) return resHandler.error(res, 404, "Coudn't found any product")
+        if (!product) return resHandler.error(res, 404, "Couldn't found any product")
 
+        // ------- Reviews from db
+        const allReview = await reviewSchema
+            .find({ product: product._id })
+
+        console.log(allReview)
         // --------- Success 
         resHandler.success(res, 200, "", product)
     } catch (error) {
