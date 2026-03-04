@@ -4,12 +4,14 @@ const auth = require('./auth')
 const category = require('./category')
 const product = require('./product')
 const review = require('./review')
+const cart = require('./cart')
 
 // ------------ All routes 
 router.use('/auth', auth)
 router.use('/category', category)
 router.use('/product', product)
 router.use('/review', review)
+router.use('/cart', cart)
 
 
 // --------- Not Found 
