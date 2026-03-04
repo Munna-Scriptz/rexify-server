@@ -153,14 +153,12 @@ const getSingle = async (req, res) => {
         if (!product) return resHandler.error(res, 404, "Couldn't found any product")
 
         // ------- Reviews from db
-        const allReview = await reviewSchema
+        const reviews = await reviewSchema
             .find({ product: product._id })
-            .populate("user", "fullname")
+            .populate("user", "fullname avatar -_id")
             .select("-__v -product -updatedAt ")
-
-        console.log(allReview)
         // --------- Success 
-        resHandler.success(res, 200, "", product)
+        resHandler.success(res, 200, "", { product, reviews })
     } catch (error) {
         resHandler.error(res, 500, 'Internal Server Error')
     }
