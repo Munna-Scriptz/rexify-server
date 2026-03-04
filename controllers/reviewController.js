@@ -33,7 +33,7 @@ const createReview = async (req, res) => {
     }
 }
 
-// ============ create review 
+// ============ edit review 
 const editReview = async (req, res) => {
     try {
         const { reviewId, rating, comment } = req.body
@@ -58,5 +58,24 @@ const editReview = async (req, res) => {
     }
 }
 
+// ============ delete review 
+const deleteReview = async (req, res) => {
+    try {
+        const { reviewId } = req.body
 
-module.exports = { createReview, editReview }
+        if (!reviewId) return resHandler.error(res, 400, 'review id is required')
+        if (!ObjectId.isValid(reviewId)) return resHandler.error(res, 400, 'invalid object id')
+
+        // ------------- Save to DB 
+        await reviewSchema.findByIdAndDelete(reviewId)
+
+        // ----------- Success 
+        resHandler.success(res, 200, "Review deleted successfully")
+    } catch (error) {
+        console.log(error)
+        resHandler.error(res, 500, "Internal server error")
+    }
+}
+
+
+module.exports = { createReview, editReview, deleteReview }
