@@ -80,13 +80,13 @@ const deleteReview = async (req, res) => {
 // ============ delete review 
 const getByUser = async (req, res) => {
     try {
-
-
         const reviews = await reviewSchema.find({
             user: req.user._id
-        }).select("-user -updatedAt -__v")
-        .populate("product")
+        })
+            .select("-user -updatedAt -__v")
+            .populate("product", "title slug thumbnail")
 
+        if (!reviews) return resHandler.error(res, 404, "Couldn't found any reviews")
 
         // ----------- Success 
         resHandler.success(res, 200, "your reviews", reviews)
