@@ -1,6 +1,6 @@
 const resHandler = require("../utils/resHandler")
 
-const createCart = () => {
+const createCart = (req, res) => {
     try {
 
     } catch (error) {
