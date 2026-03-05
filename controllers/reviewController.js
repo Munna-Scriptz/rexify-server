@@ -81,8 +81,15 @@ const deleteReview = async (req, res) => {
 const getByUser = async (req, res) => {
     try {
 
+
+        const reviews = await reviewSchema.find({
+            user: req.user._id
+        }).select("-user -updatedAt -__v")
+        .populate("product")
+
+
         // ----------- Success 
-        resHandler.success(res, 200, "")
+        resHandler.success(res, 200, "your reviews", reviews)
     } catch (error) {
         console.log(error)
         resHandler.error(res, 500, "Internal server error")

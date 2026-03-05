@@ -7,6 +7,6 @@ router.post("/create", authMiddleware, createReview)
 router.patch("/edit", authMiddleware, editReview)
 router.delete("/delete", authMiddleware, deleteReview)
 
-router.delete("/user", authMiddleware, getByUser)
+router.get("/user", authMiddleware, getByUser)
 
 module.exports = router
