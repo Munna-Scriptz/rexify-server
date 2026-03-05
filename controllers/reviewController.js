@@ -77,5 +77,17 @@ const deleteReview = async (req, res) => {
     }
 }
 
+// ============ delete review 
+const getByUser = async (req, res) => {
+    try {
 
-module.exports = { createReview, editReview, deleteReview }
+        // ----------- Success 
+        resHandler.success(res, 200, "")
+    } catch (error) {
+        console.log(error)
+        resHandler.error(res, 500, "Internal server error")
+    }
+}
+
+
+module.exports = { createReview, editReview, deleteReview, getByUser }

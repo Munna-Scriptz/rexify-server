@@ -1,10 +1,12 @@
 const express = require("express")
-const { createReview, editReview, deleteReview, getReview } = require("../controllers/reviewController")
+const { createReview, editReview, deleteReview, getByUser } = require("../controllers/reviewController")
 const authMiddleware = require("../middleware/authMiddleware")
 const router = express.Router()
 
 router.post("/create", authMiddleware, createReview)
 router.patch("/edit", authMiddleware, editReview)
 router.delete("/delete", authMiddleware, deleteReview)
+
+router.delete("/user", authMiddleware, getByUser)
 
 module.exports = router
