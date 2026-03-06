@@ -24,7 +24,9 @@ const cartSchema = new mongoose.Schema({
             default: 1,
             min: 1,
         },
-
+        discountPercentage: {
+            type: Number,
+        },
         subTotal: {
             type: Number,
             required: true,

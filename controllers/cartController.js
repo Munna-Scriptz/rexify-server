@@ -16,32 +16,33 @@ const createCart = async (req, res) => {
         // ---------- Save to DB 
         const existingCart = await cartSchema.findOne({ user })
         const existingProduct = await productSchema.findById(product).select("discountPercentage variants -_id")
-        const variantPrice = existingProduct.variants.find(
-            item => item.sku === sku
-        )?.price;
-        console.log(variantPrice)
+        const discountPercentage = existingProduct.discountPercentage
+        const variantPrice = existingProduct.variants.find(item => item.sku === sku)?.price;
+        const subTotal = variantPrice * quantity * (1 - discountPercentage / 100);
 
-        // if (existingCart) {
-        //     existingCart.items.push({
-        //         product,
-        //         sku,
-        //         quantity,
-        //         subTotal: "6456"
-        //     })
+        if (existingCart) {
+            existingCart.items.push({
+                product,
+                sku,
+                quantity,
+                discountPercentage,
+                subTotal
+            })
 
-        //     existingCart.save()
-        // } else {
-        //     const newCart = cartSchema({
-        //         user,
-        //         items: [{
-        //             product,
-        //             sku,
-        //             quantity,
-        //             subTotal: "6456"
-        //         }]
-        //     })
-        //     newCart.save()
-        // }
+            existingCart.save()
+        } else {
+            const newCart = cartSchema({
+                user,
+                items: [{
+                    product,
+                    sku,
+                    quantity,
+                    discountPercentage,
+                    subTotal
+                }]
+            })
+            newCart.save()
+        }
 
         // ----------- Success 
         resHandler.success(res, 201, "Cart Added")
