@@ -16,8 +16,10 @@ const createCart = async (req, res) => {
         // ---------- Save to DB 
         const existingCart = await cartSchema.findOne({ user })
         const existingProduct = await productSchema.findById(product).select("discountPercentage variants -_id")
-        
-        console.log(existingProduct)
+        const variantPrice = existingProduct.variants.find(
+            item => item.sku === sku
+        )?.price;
+        console.log(variantPrice)
 
         // if (existingCart) {
         //     existingCart.items.push({
