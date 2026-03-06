@@ -1,4 +1,5 @@
 const cartSchema = require("../models/cartSchema")
+const productSchema = require("../models/productSchema")
 const resHandler = require("../utils/resHandler")
 
 const createCart = async (req, res) => {
@@ -14,8 +15,9 @@ const createCart = async (req, res) => {
 
         // ---------- Save to DB 
         const existingCart = await cartSchema.findOne({ user })
+        const existingProduct = await productSchema.findById(product).select("discountPercentage variants -_id")
         
-        console.log(existingCart)
+        console.log(existingProduct)
 
         // if (existingCart) {
         //     existingCart.items.push({
