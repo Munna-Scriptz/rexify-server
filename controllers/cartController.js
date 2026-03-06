@@ -14,30 +14,33 @@ const createCart = async (req, res) => {
 
         // ---------- Save to DB 
         const existingCart = await cartSchema.findOne({ user })
-        if (existingCart) {
-            existingCart.items.push({
-                product,
-                sku,
-                quantity,
-                subTotal: "6456"
-            })
+        
+        console.log(existingCart)
 
-            existingCart.save()
-        } else {
-            const newCart = cartSchema({
-                user,
-                items: [{
-                    product,
-                    sku,
-                    quantity,
-                    subTotal: "6456"
-                }]
-            })
-            newCart.save()
-        }
+        // if (existingCart) {
+        //     existingCart.items.push({
+        //         product,
+        //         sku,
+        //         quantity,
+        //         subTotal: "6456"
+        //     })
+
+        //     existingCart.save()
+        // } else {
+        //     const newCart = cartSchema({
+        //         user,
+        //         items: [{
+        //             product,
+        //             sku,
+        //             quantity,
+        //             subTotal: "6456"
+        //         }]
+        //     })
+        //     newCart.save()
+        // }
 
         // ----------- Success 
-        resHandler.success(res, 201, "Cart Added", existingCart)
+        resHandler.success(res, 201, "Cart Added")
     } catch (error) {
         console.log(error)
         resHandler.error(res, 500, "Internal server error")
