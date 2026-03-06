@@ -12,20 +12,34 @@ const createCart = async (req, res) => {
         if (!sku) return resHandler.error(res, 400, "product sku is required")
         if (!quantity || quantity < 1) return resHandler.error(res, 400, "quantity is required and must be at least 1")
 
-            // ---------- Save to DB 
+        // ---------- Save to DB 
+        const existingCart = await cartSchema.findOne({ user })
+        if (existingCart) {
+            existingCart.items.push({
+                product,
+                sku,
+                quantity,
+                subTotal: "6456"
+            })
+
+            existingCart.save()
+        } else {
             const newCart = cartSchema({
                 user,
                 items: [{
-                    product: "",
-                    sku: "",
-                    quantity: "",
-                    subTotal: ""
+                    product,
+                    sku,
+                    quantity,
+                    subTotal: "6456"
                 }]
             })
+            newCart.save()
+        }
 
         // ----------- Success 
-        resHandler.success(res, 201, "Cart Added", newCart)
+        resHandler.success(res, 201, "Cart Added", existingCart)
     } catch (error) {
+        console.log(error)
         resHandler.error(res, 500, "Internal server error")
     }
 }
