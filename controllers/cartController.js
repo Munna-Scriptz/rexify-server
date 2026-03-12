@@ -15,13 +15,23 @@ const createCart = async (req, res) => {
         if (!sku) return resHandler.error(res, 400, "product sku is required")
         if (!quantity || quantity < 1) return resHandler.error(res, 400, "quantity is required and must be at least 1")
 
-        // ---------- Save to DB 
+        // ---------- Find from DB and validate 
         const existingCart = await cartSchema.findOne({ user })
+        if (!existingCart) return resHandler.error(res, 404, "cart doesn't exist")
+        // ---- product
         const existingProduct = await productSchema.findById(product).select("discountPercentage variants -_id")
+        if (!existingProduct) return resHandler.error(res, 404, "couldn't found product")
+        // ---- duplicate check
+        const duplicateCart = existingCart.items.some(item => item.sku == sku)
+        if (duplicateCart) return resHandler.error(res, 404, "Product already added to cart")
+
+        // --------- discount and subtotal
         const discountPercentage = existingProduct.discountPercentage
         const variantPrice = existingProduct.variants.find(item => item.sku === sku)?.price;
+        if (!variantPrice) return resHandler.error(res, 404, "Wrong product sku")
         const subTotal = variantPrice * quantity * (1 - discountPercentage / 100);
-
+    
+        // ---------- Save to DB 
         if (existingCart) {
             existingCart.items.push({
                 product,
@@ -46,6 +56,7 @@ const createCart = async (req, res) => {
             newCart.save()
         }
 
+
         // ----------- Success 
         resHandler.success(res, 201, "Cart Added")
     } catch (error) {
@@ -56,7 +67,7 @@ const createCart = async (req, res) => {
 // =================== update
 const updateCart = async (req, res) => {
     try {
-        
+
 
 
 
