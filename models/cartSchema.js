@@ -30,8 +30,7 @@ const cartSchema = new mongoose.Schema({
         subTotal: {
             type: Number,
             required: true,
-        },
-        _id: false
+        }
     }],
 
     totalItems: {

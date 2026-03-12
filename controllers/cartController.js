@@ -2,6 +2,8 @@ const cartSchema = require("../models/cartSchema")
 const productSchema = require("../models/productSchema")
 const resHandler = require("../utils/resHandler")
 
+
+// =================== Create 
 const createCart = async (req, res) => {
     try {
         const user = req.user._id
@@ -47,10 +49,24 @@ const createCart = async (req, res) => {
         // ----------- Success 
         resHandler.success(res, 201, "Cart Added")
     } catch (error) {
-        console.log(error)
+        resHandler.error(res, 500, "Internal server error")
+    }
+}
+
+// =================== update
+const updateCart = async (req, res) => {
+    try {
+        
+
+
+
+
+
+    } catch (error) {
         resHandler.error(res, 500, "Internal server error")
     }
 }
 
 
-module.exports = { createCart }
+
+module.exports = { createCart, updateCart }
