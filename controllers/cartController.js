@@ -84,6 +84,8 @@ const updateCart = async (req, res) => {
             { user, "items.product": product, "items.sku": sku }
         ).select("-user -createdAt -updatedAt -__v")
 
+        if (!existingCart) return resHandler.error(res, 404, "Couldn't found any cart")
+
         const findItem = existingCart.items.find(item => item.sku == sku);
 
         // --------- Update 
