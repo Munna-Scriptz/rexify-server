@@ -1,6 +1,7 @@
 const cartSchema = require("../models/cartSchema")
 const productSchema = require("../models/productSchema")
 const resHandler = require("../utils/resHandler")
+const { ObjectId } = require('mongodb');
 
 
 // =================== Create 
@@ -12,27 +13,29 @@ const createCart = async (req, res) => {
         // ------------ Validation 
         if (!user) return resHandler.error(res, 400, "invalid request")
         if (!product) return resHandler.error(res, 400, "product is required")
+        if (!ObjectId.isValid(product)) return resHandler.error(res, 400, "Invalid product id")
         if (!sku) return resHandler.error(res, 400, "product sku is required")
         if (!quantity || quantity < 1) return resHandler.error(res, 400, "quantity is required and must be at least 1")
 
         // ---------- Find from DB and validate 
         const existingCart = await cartSchema.findOne({ user })
-        if (!existingCart) return resHandler.error(res, 404, "cart doesn't exist")
-        // ---- product
+        console.log(existingCart)
         const existingProduct = await productSchema.findById(product).select("discountPercentage variants -_id")
         if (!existingProduct) return resHandler.error(res, 404, "couldn't found product")
-        // ---- duplicate check
-        const duplicateCart = existingCart.items.some(item => item.sku == sku)
-        if (duplicateCart) return resHandler.error(res, 404, "Product already added to cart")
 
         // --------- discount and subtotal
         const discountPercentage = existingProduct.discountPercentage
         const variantPrice = existingProduct.variants.find(item => item.sku === sku)?.price;
         if (!variantPrice) return resHandler.error(res, 404, "Wrong product sku")
         const subTotal = variantPrice * quantity * (1 - discountPercentage / 100);
-    
+
         // ---------- Save to DB 
         if (existingCart) {
+            // ---- duplicate check
+            const duplicateCart = existingCart.items.some(item => item.sku == sku)
+            if (duplicateCart) return resHandler.error(res, 404, "Product already added to cart")
+
+            // ---- cart add
             existingCart.items.push({
                 product,
                 sku,
@@ -60,6 +63,7 @@ const createCart = async (req, res) => {
         // ----------- Success 
         resHandler.success(res, 201, "Cart Added")
     } catch (error) {
+        console.log(error)
         resHandler.error(res, 500, "Internal server error")
     }
 }
