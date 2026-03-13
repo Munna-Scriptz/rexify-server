@@ -66,7 +66,7 @@ const createCart = async (req, res) => {
     }
 }
 
-// =================== update
+// =================== Update
 const updateCart = async (req, res) => {
     try {
         const user = req.user._id
@@ -96,7 +96,34 @@ const updateCart = async (req, res) => {
 
         await existingCart.save()
         // ----------- Success 
-        resHandler.success(res, 201, "Cart updated", existingCart)
+        resHandler.success(res, 200, "Cart updated", existingCart)
+    } catch (error) {
+        resHandler.error(res, 500, "Internal server error")
+    }
+}
+
+// =================== Delete 
+const deleteCart = async (req, res) => {
+    try {
+        const user = req.user._id
+        const { product, sku } = req.body
+
+        // ------------ Validation 
+        if (!product) return resHandler.error(res, 400, "product is required")
+        if (!ObjectId.isValid(product)) return resHandler.error(res, 400, "Invalid product id")
+        if (!sku) return resHandler.error(res, 400, "product sku is required")
+
+        // ---------- Find from DB 
+        const existingCart = await cartSchema.findOne(
+            { user, "items.product": product, "items.sku": sku }
+        )
+
+        const findItem = existingCart.items.find(item => item.sku !== sku);
+        existingCart.items = findItem
+        
+        existingCart.save()
+        // ----------- Success 
+        resHandler.success(res, 200, "Cart deleted")
     } catch (error) {
         console.log(error)
         resHandler.error(res, 500, "Internal server error")
@@ -104,5 +131,4 @@ const updateCart = async (req, res) => {
 }
 
 
-
-module.exports = { createCart, updateCart }
+module.exports = { createCart, updateCart, deleteCart }

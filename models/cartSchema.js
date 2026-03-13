@@ -41,7 +41,7 @@ const cartSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 cartSchema.pre("save", function () {
-    this.totalItems = this.items.reduce((acc, item) => acc + item.quantity, 0);
+    this.totalItems = this.items?.reduce((acc, item) => acc + item.quantity, 0);
 });
 
 module.exports = mongoose.model("cart", cartSchema);
