@@ -79,15 +79,24 @@ const updateCart = async (req, res) => {
         if (!sku) return resHandler.error(res, 400, "product sku is required")
         if (!quantity || quantity < 1) return resHandler.error(res, 400, "quantity is required and must be at least 1")
 
-        // ---------- Find from DB and validate 
-        const existingCart = await cartSchema.findOneAndUpdate(
-            { user, "items.product": product, "items.sku": sku },
-            { "$set": { "items.$.quantity": quantity } },
-            { new: true }).select("-_id -user -createdAt -updatedAt -__v")
+        // ---------- Find from DB 
+        const existingCart = await cartSchema.findOne(
+            { user, "items.product": product, "items.sku": sku }
+        ).select("-user -createdAt -updatedAt -__v")
 
+        const findItem = existingCart.items.find(item => item.sku == sku);
+
+        // --------- Update 
+        const subTotal = findItem.subTotal * quantity
+        findItem.quantity = quantity;
+        findItem.subTotal = subTotal
+
+
+        await existingCart.save()
         // ----------- Success 
         resHandler.success(res, 201, "Cart updated", existingCart)
     } catch (error) {
+        console.log(error)
         resHandler.error(res, 500, "Internal server error")
     }
 }
