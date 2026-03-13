@@ -19,7 +19,6 @@ const createCart = async (req, res) => {
 
         // ---------- Find from DB and validate 
         const existingCart = await cartSchema.findOne({ user })
-        console.log(existingCart)
         const existingProduct = await productSchema.findById(product).select("discountPercentage variants -_id")
         if (!existingProduct) return resHandler.error(res, 404, "couldn't found product")
 
@@ -63,7 +62,6 @@ const createCart = async (req, res) => {
         // ----------- Success 
         resHandler.success(res, 201, "Cart Added")
     } catch (error) {
-        console.log(error)
         resHandler.error(res, 500, "Internal server error")
     }
 }
@@ -71,12 +69,24 @@ const createCart = async (req, res) => {
 // =================== update
 const updateCart = async (req, res) => {
     try {
+        const user = req.user._id
+        const { product, sku, quantity } = req.body
 
+        // ------------ Validation 
+        if (!user) return resHandler.error(res, 400, "invalid request")
+        if (!product) return resHandler.error(res, 400, "product is required")
+        if (!ObjectId.isValid(product)) return resHandler.error(res, 400, "Invalid product id")
+        if (!sku) return resHandler.error(res, 400, "product sku is required")
+        if (!quantity || quantity < 1) return resHandler.error(res, 400, "quantity is required and must be at least 1")
 
+        // ---------- Find from DB and validate 
+        const existingCart = await cartSchema.findOneAndUpdate(
+            { user, "items.product": product, "items.sku": sku },
+            { "$set": { "items.$.quantity": quantity } },
+            { new: true }).select("-_id -user -createdAt -updatedAt -__v")
 
-
-
-
+        // ----------- Success 
+        resHandler.success(res, 201, "Cart updated", existingCart)
     } catch (error) {
         resHandler.error(res, 500, "Internal server error")
     }
