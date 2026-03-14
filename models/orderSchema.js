@@ -1,0 +1,94 @@
+const mongoose = require("mongoose")
+
+const orderItem = mongoose.Schema({
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "product",
+        required: true,
+    },
+    sku: {
+        type: String,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+        min: 1,
+    },
+    discountPercentage: {
+        type: Number,
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    subTotal: {
+        type: Number,
+        required: true,
+    }
+})
+
+const paymentSchema = mongoose.Schema({
+    method: {
+        type: String,
+        emun: ["bkash", "nagad", "stripe", "SSLCommerz", "cod"]
+    },
+    paymentId: {
+        type: String,
+    },
+    status: {
+        type: String,
+        emun: ["pending", "paid", "cancelled"],
+        default: "pending"
+    },
+    paidAt: {
+        type: Date
+    }
+})
+
+
+const orderSchema = mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+        required: true,
+        unique: true,
+    },
+    items: [
+        orderItem
+    ],
+    totalPrice: {
+        type: Number,
+        required: true
+    },
+    shippingAddress: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    insideDhaka: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    deliveryCharge: {
+        type: Numebr,
+        default: 0
+    },
+    status: {
+        type: String,
+        enum: ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"],
+        default: true
+    },
+    orderId: {
+        type: String,
+        unique: true
+    }
+}, { timestamps: true })
+
+
+module.exports = mongoose.model("order", orderSchema)
