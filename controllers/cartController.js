@@ -24,9 +24,9 @@ const createCart = async (req, res) => {
 
         // --------- discount and subtotal
         const discountPercentage = existingProduct.discountPercentage
-        const variantPrice = existingProduct.variants.find(item => item.sku === sku)?.price;
-        if (!variantPrice) return resHandler.error(res, 404, "Wrong product sku")
-        const subTotal = variantPrice * quantity * (1 - discountPercentage / 100);
+        const price = existingProduct.variants.find(item => item.sku === sku)?.price;
+        if (!price) return resHandler.error(res, 404, "Wrong product sku")
+        const subTotal = price * quantity * (1 - discountPercentage / 100);
 
         // ---------- Save to DB 
         if (existingCart) {
@@ -40,6 +40,7 @@ const createCart = async (req, res) => {
                 sku,
                 quantity,
                 discountPercentage,
+                price,
                 subTotal
             })
 
@@ -52,6 +53,7 @@ const createCart = async (req, res) => {
                     sku,
                     quantity,
                     discountPercentage,
+                    price,
                     subTotal
                 }]
             })
@@ -88,8 +90,13 @@ const updateCart = async (req, res) => {
 
         const findItem = existingCart.items.find(item => item.sku == sku);
 
+        // --------- subtotal  
+        const discountPercentage = findItem.discountPercentage
+        const price = findItem.price;
+        if (!price) return resHandler.error(res, 404, "Wrong product sku")
+        const subTotal = price * quantity * (1 - discountPercentage / 100);
+
         // --------- Update 
-        const subTotal = findItem.subTotal * quantity
         findItem.quantity = quantity;
         findItem.subTotal = subTotal
 
