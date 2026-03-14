@@ -120,7 +120,7 @@ const deleteCart = async (req, res) => {
 
         const findItem = existingCart.items.find(item => item.sku !== sku);
         existingCart.items = findItem
-        
+
         existingCart.save()
         // ----------- Success 
         resHandler.success(res, 200, "Cart deleted")
@@ -130,5 +130,24 @@ const deleteCart = async (req, res) => {
     }
 }
 
+// =================== Delete 
+const getCart = async (req, res) => {
+    try {
+        const user = req.user._id
 
-module.exports = { createCart, updateCart, deleteCart }
+        // ------------ Validation 
+        if (!user) return resHandler.error(res, 400, "invalid cart request")
+
+        // ---------- Find from DB 
+        const existingCart = await cartSchema.find({ user }).select("-user -createdAt -updatedAt -__v")
+
+        // ----------- Success 
+        resHandler.success(res, 200, "Your cart", existingCart)
+    } catch (error) {
+        console.log(error)
+        resHandler.error(res, 500, "Internal server error")
+    }
+}
+
+
+module.exports = { createCart, updateCart, deleteCart, getCart }
