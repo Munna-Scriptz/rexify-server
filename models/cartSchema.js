@@ -1,5 +1,34 @@
 const mongoose = require("mongoose");
 
+const cartItem = mongoose.schema({
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+    },
+    sku: {
+        type: String,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+        min: 1,
+    },
+    discountPercentage: {
+        type: Number,
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    subTotal: {
+        type: Number,
+        required: true,
+    }
+})
+
 const cartSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -7,36 +36,9 @@ const cartSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-
-    items: [{
-        product: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product",
-            required: true,
-        },
-        sku: {
-            type: String,
-            required: true
-        },
-        quantity: {
-            type: Number,
-            required: true,
-            default: 1,
-            min: 1,
-        },
-        discountPercentage: {
-            type: Number,
-        },
-        price: {
-            type: Number,
-            required: true
-        },
-        subTotal: {
-            type: Number,
-            required: true,
-        }
-    }],
-
+    items: [
+        FcartItem
+    ],
     totalItems: {
         type: Number,
         default: 0,
